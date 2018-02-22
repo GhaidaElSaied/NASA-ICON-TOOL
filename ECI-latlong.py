@@ -105,6 +105,25 @@ def czml_writer():
         all_data += thisline
     
     #convert_time_and_position(all_data[2])
+	
+
+L = ("ICON_EPHPRE120_18037_000000_28034_235800.txt")
+target = ("input searching for")
+def find(L, target):
+    start = 0
+#I dont think L is the right thing in this case, because len(L) is the length of the original file
+    end = len(L) - 1
+    while start <= end:
+        middle = (start + end)// 2
+        midpoint = L[middle]
+        if midpoint > target:
+            end = middle - 1
+        elif midpoint < target:
+            start = middle + 1
+        else:
+            return midpoint
+
+    L = sorted(L)
 
 
 # goal "2017-08-13T00:00:00+00:00", 112.811759218, -22.1268950621, 571398.6700,
