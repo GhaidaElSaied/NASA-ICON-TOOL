@@ -4,6 +4,14 @@ from astropy import units as u
 from astropy.coordinates import GCRS, ITRS, EarthLocation, CartesianRepresentation
 from astropy.time import Time
 
+import sys
+import os
+
+# if you get an OSE error when downloading spicey py use this instead: git clone git@github.com:AndrewAnnex/SpiceyPy.git
+#SPICE Kernels. SPICE stores data in files that are often referred to as "kernels.'' A kernel may store data in either text 
+#(ASCII) or binary format.
+
+import spiceypy as spice 
 
 def eci2lla(x, y, z, yyyy, mm, dd, h, m, s):
     """
@@ -46,6 +54,8 @@ def convert_time_to_string(year_date, time):
     hours = time_stamp[0]
     minutes = time_stamp[1]
     seconds = time_stamp[2].split(".")[0]
+    
+#    spiceypy.spiceypy.et2utc(et, formatStr, prec, lenout=256)
     UTC = datetime.datetime(int(yyyy), 1, 1) + datetime.timedelta(int(ddd) - 1, seconds=int(seconds),
                                                                   minutes=int(minutes), hours=int(hours))
     UTC = UTC.strftime("%Y-%m-%dT%H:%M:%S")
@@ -96,9 +106,34 @@ def convert_time_and_position(lst):
     return time_string + ", " + str(latitude) + ", " + str(longitude) + ", " + str(altitude)
 
 
+
+
+
+#you have to specify the version of cspice that you are using to open the file. I used the default version
+
+def __init__(self, version='N0066'):
+        try:
+            cspice = 'cspice.{}'.format(self._ext)
+            
+            #0,0 version and distribution -- so i left it blank
+            
+            self._rcspice = ('"ICON_EPHPRE120_18037_000000_28034_235800.bsp".format(0,0,cspice)
+
+            # Setup the local directory (where the package will be downloaded)
+            self._root = os.path.realpath(os.path.dirname(__file__))
+
+            # Download the file
+            print('Downloading CSPICE')
+                   self._unpack()
+                   break
+
+
+
+
+
 def czml_writer():
     # opens file with 10 years worth of data
-    f = open("ICON_EPHPRE120_18037_000000_28034_235800.txt", "r")
+    f = open("ICON_EPHPRE120_18037_000000_28034_235800.bsp", "r")
     start_file = '[{"version": "1.0", "id": "document"}, {"label": {"text": "ICON", "pixelOffset": {"cartesian2": [0.0, 16.0]}, "scale": 0.5, "show": true}, "path": {"show": true, "material": {"solidColor": {"color": {"rgba": [255, 165, 0, 1]}}}, "width": 2, "trailTime": 0, "resolution": 120, "leadTime": 0, "trailTime": 10000}, "model": {"gltf" : "../../SampleData/models/CesiumAir/Cesium_Air.glb", "scale" : 2.0, "minimumPixelSize": 64, "show": true}, "position": {"interpolationDegree": 5, "referenceFrame": "INTERTIAL", "cartographicDegrees": '
     end_file = ', "interpolationAlgorithm": "LAGRANGE"}, "id": "ICON"}]'
     lines = f.readlines()
@@ -118,10 +153,20 @@ def czml_writer():
     while ((all_data[count][0][5:] == date or ('0' + str(int(all_data[count][0][5:]) - 1)) == date)
            and count < len(all_data)):
         if ('0' + str(int(all_data[count][0][5:]) - 1) == date):
-            file_complete = start_file + str(all_converted_data) + end_file
-            f = open(string_position[0:10]+".txt", "w+")
+                             
+ #what should lenvals and length of array be?
+            open(self.rspice)                 
+                def esrchc(value, array):
+                value = stypes.stringToCharP(date)
+                ndim = ctypes.c_int(len(all_data))
+                lenvals = ctypes.c_int(len(max(array, key=len)) + 1)
+                array = stypes.listToCharArray(array, xLen=lenvals, yLen=ndim)
+                    return libspice.esrchc_c(value)            
+                             
+          
             f.write(file_complete);
             f.close();
+            
             print('Data for: ' + string_position[0:10] + ' written to file ' + string_position[0:10] + ".czml")
             date = all_data[count][0][5:]
             all_converted_data = []
@@ -134,7 +179,5 @@ def czml_writer():
             string_position = convert_time_and_position(all_data[count])
             all_converted_data += [string_position]
             count = count + 1
-
-
 
 czml_writer()
