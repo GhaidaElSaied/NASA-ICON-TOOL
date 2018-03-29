@@ -3,15 +3,8 @@ import datetime
 from astropy import units as u
 from astropy.coordinates import GCRS, ITRS, EarthLocation, CartesianRepresentation
 from astropy.time import Time
-
-import sys
 import os
 
-# if you get an OSE error when downloading spicey py use this instead: git clone git@github.com:AndrewAnnex/SpiceyPy.git
-#SPICE Kernels. SPICE stores data in files that are often referred to as "kernels.'' A kernel may store data in either text 
-#(ASCII) or binary format.
-
-import spiceypy as spice 
 
 def eci2lla(x, y, z, yyyy, mm, dd, h, m, s):
     """
@@ -31,7 +24,8 @@ def eci2lla(x, y, z, yyyy, mm, dd, h, m, s):
     tt = Time(datetime.datetime(yyyy, mm, dd, h, m, s), scale='utc')
 
     # Read the coordinates in the Geocentric Celestial Reference System
-    gcrs = GCRS(CartesianRepresentation(x=x * u.m, y=y * u.m, z=z * u.m), obstime=tt)
+
+    gcrs = GCRS(CartesianRepresentation(x=x * u.km, y=y * u.km, z=z * u.km), obstime=tt)
 
     # Convert it to an Earth-fixed frame
     itrs = gcrs.transform_to(ITRS(obstime=tt))
@@ -41,7 +35,7 @@ def eci2lla(x, y, z, yyyy, mm, dd, h, m, s):
     # conversion to geodetic
     lon, lat, alt = el.to_geodetic()
 
-    return lon, lat, alt
+    return lat, lon, alt * 1000
 
 
 def convert_time_to_string(year_date, time):
@@ -54,8 +48,6 @@ def convert_time_to_string(year_date, time):
     hours = time_stamp[0]
     minutes = time_stamp[1]
     seconds = time_stamp[2].split(".")[0]
-    
-#    spiceypy.spiceypy.et2utc(et, formatStr, prec, lenout=256)
     UTC = datetime.datetime(int(yyyy), 1, 1) + datetime.timedelta(int(ddd) - 1, seconds=int(seconds),
                                                                   minutes=int(minutes), hours=int(hours))
     UTC = UTC.strftime("%Y-%m-%dT%H:%M:%S")
@@ -102,39 +94,14 @@ def convert_time_and_position(lst):
     longitude = tuple1[0].value
     latitude = tuple1[1].value
     altitude = abs(tuple1[2].value)
-    # sketchy that this returns something negative!
-    return time_string + ", " + str(latitude) + ", " + str(longitude) + ", " + str(altitude)
+    return ('"%s"' % time_string) + ", " + str(latitude) + ", " + str(longitude) + ", " + str(altitude)
 
+#takes in an input of the number of years you want to rewrite, if it is less than 10 (the full file input integer)
 
-
-
-
-#you have to specify the version of cspice that you are using to open the file. I used the default version
-
-def __init__(self, version='N0066'):
-        try:
-            cspice = 'cspice.{}'.format(self._ext)
-            
-            #0,0 version and distribution -- so i left it blank
-            
-            self._rcspice = ('"ICON_EPHPRE120_18037_000000_28034_235800.bsp".format(0,0,cspice)
-
-            # Setup the local directory (where the package will be downloaded)
-            self._root = os.path.realpath(os.path.dirname(__file__))
-
-            # Download the file
-            print('Downloading CSPICE')
-                   self._unpack()
-                   break
-
-
-
-
-
-def czml_writer():
-    # opens file with 10 years worth of data
-    f = open("ICON_EPHPRE120_18037_000000_28034_235800.bsp", "r")
-    start_file = '[{"version": "1.0", "id": "document"}, {"label": {"text": "ICON", "pixelOffset": {"cartesian2": [0.0, 16.0]}, "scale": 0.5, "show": true}, "path": {"show": true, "material": {"solidColor": {"color": {"rgba": [255, 165, 0, 1]}}}, "width": 2, "trailTime": 0, "resolution": 120, "leadTime": 0, "trailTime": 10000}, "model": {"gltf" : "../../SampleData/models/CesiumAir/Cesium_Air.glb", "scale" : 2.0, "minimumPixelSize": 64, "show": true}, "position": {"interpolationDegree": 5, "referenceFrame": "INTERTIAL", "cartographicDegrees": '
+def czml_writer(year_amount_to_rewrite=10):
+    lines_to_rewrite = int(year_amount_to_rewrite * 366 * 720)
+    f = open("ICON_EPHPRE120_18037_000000_28034_235800", "r")
+    start_file = '[{"version": "1.0", "id": "document"}, {"label": {"text": "ICON", "pixelOffset": {"cartesian2": [0.0, 16.0]}, "scale": 0.5, "show": true}, "path": {"show": true, "material": {"solidColor": {"color": {"rgba": [255, 0, 255, 125]}}}, "width": 2, "trailTime": 0, "resolution": 120, "leadTime": 0, "trailTime": 10000}, "model": {"gltf" : "../../SampleData/models/CesiumAir/Cesium_Air.glb", "scale" : 2.0, "minimumPixelSize": 64, "show": true}, "position": {"interpolationDegree": 5, "referenceFrame": "INTERTIAL", "cartographicDegrees":'
     end_file = ', "interpolationAlgorithm": "LAGRANGE"}, "id": "ICON"}]'
     lines = f.readlines()
     lines = lines[1:]
@@ -148,36 +115,36 @@ def czml_writer():
     #sets starting date to first date of data in the file
     date = all_data[0][0][5:]
     count = 0
+    check_file_exists = all_data[0][0].replace("/","_") + ".czml"
 
+    if os.path.isfile(check_file_exists):
+        if len(all_data) >= lines_to_rewrite:
+            all_data = all_data[:lines_to_rewrite]
+
+    print(len(all_data))
     # iterates through one day of data, once you get through the first day- writes a file, and then moves on to the next day
-    while ((all_data[count][0][5:] == date or ('0' + str(int(all_data[count][0][5:]) - 1)) == date)
-           and count < len(all_data)):
-        if ('0' + str(int(all_data[count][0][5:]) - 1) == date):
-                             
- #what should lenvals and length of array be?
-            open(self.rspice)                 
-                def esrchc(value, array):
-                value = stypes.stringToCharP(date)
-                ndim = ctypes.c_int(len(all_data))
-                lenvals = ctypes.c_int(len(max(array, key=len)) + 1)
-                array = stypes.listToCharArray(array, xLen=lenvals, yLen=ndim)
-                    return libspice.esrchc_c(value)            
-                             
-          
-            f.write(file_complete);
-            f.close();
-            
-            print('Data for: ' + string_position[0:10] + ' written to file ' + string_position[0:10] + ".czml")
-            date = all_data[count][0][5:]
-            all_converted_data = []
-            string_position = convert_time_and_position(all_data[count])
-            all_converted_data += [string_position]
-            count = count + 1
+    #while ((all_data[count][0][5:] == date or ('0' + str(int(all_data[count][0][5:]) - 1)) == date or str(int(all_data[count][0][5:]) - 1) == date)
+           #and count < len(all_data)):
+    while count < len(all_data):
+        if ('00' + str(int(all_data[count][0][5:]) - 1) == date
+            or'0' + str(int(all_data[count][0][5:]) - 1) == date
+            or str(int(all_data[count][0][5:]) - 1) == date
+            or (int(all_data[count][0][5:]) == 1 and (date == '365' or date == '366'))):
+                file_complete = start_file + str(all_converted_data).replace("'",'') + end_file
+                potential_name = all_data[count - 1][0].replace("/","_")
+                f = open(potential_name+".czml", "w+")
+                f.write(file_complete);
+                f.close();
+                print('Data for: ' + string_position[1:11] + ' written to file ' + string_position[1:11] + ".czml")
+                date = all_data[count][0][5:]
+                all_converted_data = []
+                string_position = convert_time_and_position(all_data[count])
+                all_converted_data += [string_position]
+                count = count + 1
         else:
-            #print((str(int(all_data[count][0][5:]) - 1)))
-            #print(count)
-            string_position = convert_time_and_position(all_data[count])
-            all_converted_data += [string_position]
-            count = count + 1
+                string_position = convert_time_and_position(all_data[count])
+                all_converted_data += [string_position]
+                count = count + 1
+
 
 czml_writer()
