@@ -3,7 +3,7 @@ from netCDF4 import Dataset
 import math
 import numpy
 def czm_generator_euv(filename):
-    """Writes a czml file from the unit vectors of the 108 vertical positions with epoch along with lon,lat, alt"""
+    """Writes a czml file from the unit vectors of the 108 vertical positions with epoch""
     euvdata = Dataset(filename,"r" )
     unit_vector_vertical = euvdata.variables["ICON_ANCILLARY_EUV_FOV_UNITVECTORS_ECEF"]
     vertical = vertical_time(unit_vector_vertical)
@@ -21,6 +21,7 @@ def czm_generator_euv(filename):
 
 
 def vertical_time(matrix):
+"""creates a nested list of measurements paired with times""""
     time_vertical_matrix = []
     for i in range (len(matrix)):
         time_vertical_matrix += list(map(list, list(zip(matrix[i][1], matrix[i][2]))))
