@@ -25,12 +25,4 @@ def czml_generator_fov_ivm(filename):
 	f.close();
 	return "file written for " + filename[:-2]
 
-def posistions(lat,lon,alt,time):
-	"""Outputs a list with the posistions of the satellite by time when given the lat,lon,alt,time variables from a netcdf file. """
-	posistions = []
-	for i in range(len(lat)):
-		posistion = convert_time_format(time[i]),lon[i],lat[i],(alt[i] * 1000)
-		posistions += posistion
-	return posistions
-
 print(czml_generator_fov_ivm("ICON_L0P_IVM-A_Ancillary_2017-05-28_v01r000.NC"))
