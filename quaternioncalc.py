@@ -53,7 +53,7 @@ def hamilton_product(quat_1, quat_2):
 
 def scalar_compute_quat(quat_1, quat_2):
     """computes the scalar component of hamilton product"""
-    vector_1, vector_2 = quat_1, quat_2
+    vector_1, vector_2 = quat_1[:], quat_2[:]
     del vector_1[0]
     del vector_2[0]
     new_scalar = 0
