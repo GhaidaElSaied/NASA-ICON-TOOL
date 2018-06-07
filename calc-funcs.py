@@ -10,6 +10,12 @@ def convert_time_format(time):
 	time_string = time[0:10] + "T" + time[11:19] +"+00:00"
 	return ('"%s"' % time_string) 
 
+def positions(lat, lon, alt, time):
+	"""Outputs a list with the positions of the satellite by time when given the lat, lon, alt, time variables from a netcdf file. """
+	positions = []
+	for i in range(len(lat)):
+		positions += [convert_time_format(time[i]), lon[i], lat[i], (alt[i] * 1000)]
+return positions
 
 def orientations(instra_x_hat,instra_y_hat,instra_z_hat,time):
 	"""Generates a unit Quaternion from the xhat,yhat,zhat,and time"""
