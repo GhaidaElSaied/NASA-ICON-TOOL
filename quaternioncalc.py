@@ -32,8 +32,8 @@ def quaternion_angle(matrix):
 def quaternion_rotation(quaternion, vector):
     """rotates vector by a quaternion, returning the rotated vector"""
     quat_conjugate = quaternion_conjugate(quaternion)
-    vector_ = [0] + vector
-    new_quat = hamilton_product(quaternion, vector_)
+    vector = [0] + vector
+    new_quat = hamilton_product(quaternion, vector)
     rotated_vector = hamilton_product(new_quat, quat_conjugate)
     return rotated_vector[1:]
 
