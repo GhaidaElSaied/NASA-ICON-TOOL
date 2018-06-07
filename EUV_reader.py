@@ -1,47 +1,54 @@
 
 from netCDF4 import Dataset
-import math
-import numpy
+from netCDF4 import ecef_to_enu
+from calc_funcs import convert_time_format, orientations, positions
+
 def czm_generator_euv(filename):
-    """Writes a czml file from the unit vectors of the 108 vertical positions with epoch""
-    euvdata = Dataset(filename,"r" )
-    unit_vector_vertical = euvdata.variables["ICON_ANCILLARY_EUV_FOV_UNITVECTORS_ECEF"]
-    vertical = vertical_time(unit_vector_vertical)
-    start_file = '[{"version": "1.0", "id": "document"}, {"label": {"text": "ICON", "pixelOffset": {"cartesian2": [0.0, 16.0]}, "scale": 0.5, "show": true}, "path": {"show": false, "material": {"solidColor": {"color": {"rgba": [255, 0, 255, 125]}}}, "width": 2, "trailTime": 0, "resolution": 120, "leadTime": 0, "trailTime": 10000},  "cylinder" : { "length" : 1000000.0, "topRadius" : 100.0, "bottomRadius" : 500000.0, "material" : { "solidColor" : { "color" : { "rgba" : [0, 255, 0, 128] } } }, "outline" : true, "outlineColor" : { "rgba" : [0, 0, 0, 255] } }, "position": {"interpolationDegree": 5, "referenceFrame": "INTERTIAL", "cartographicDegrees":'
-    end_file = '}, "id": "ICON"}]'
-    file_complete = start_file + str(vertical).replace("'",'') + end_file
-    f = open(filename + '.txt', "w+")
-    f.write(file_complete);
-    f.close();
-    return "file written for " + filename[:-2]
-    
-    
+	euvdata = Dataset(filename,"r" )
 
-        
+	icon_x_hat = euvdata.variables["ICON_ANCILLARY_EUV_SC_XHAT"]
+	icon_y_hat = euvdata.variables["ICON_ANCILLARY_EUV_SC_YHAT"]
+	icon_z_hat = euvdata.variables["ICON_ANCILLARY_EUV_SC_ZHAT"]
+	
+	time = euvdata.variables["ICON_ANCILLARY_EUV_TIME_UTC_STRING"]
+	
+	# spacecraft position determines EUV FOV start position
+	lat = euvdata.variables["ICON_ANCILLARY_EUV_LATITUDE"]
+	lon = euvdata.variables["ICON_ANCILLARY_EUV_LONGITUDE"]
+	alt = euvdata.variables["ICON_ANCILLARY_EUV_ALTITUDE"]
 
+	unit_vector_vertical = euvdata.variables["ICON_ANCILLARY_EUV_FOV_UNITVECTORS_ECEF"]
+   	
+	vertical = vertical_time(unit_vector_vertical)
 
+	position_list = positions(lat, lon, alt, time)
+	orientation_list = orientations(icon_x_hat, icon_y_hat, icon_z_hat, time)
+
+   	start_file = """[
+	{"id" : "document",
+	"name" : "EUV",
+	"version" : "1.0",
+	},
+	{"id" : "cone",
+	"availability" : "2012-08-04T16:00:00Z/2012-08-04T16:05:00Z"
+	"position" : {
+		"epoch" : "",
+		"cartographicDegrees" :"""
+    	middle_file =', "interpolationAlgorithm": "LAGRANGE"},"orientation":{"interpolationAlgorithm":"LINEAR", "interpolationDegree":1, "unitQuaternion":'
+    	end_file = '}]'
+
+    	start_file + str(position_list).replace("'",'') + middle_file + str(orientation_list).replace("'",'') + end_file
+    	f = open(filename[: -3] + '.txt', "w+")
+    	f.write(file_complete)
+    	f.close();
+    	return "file written for " + filename[:-3]
+
+# orientations should be recalculated based on where the EUV is looking
+def orientations():
+
+# match all vertical positions
 def vertical_time(matrix):
-"""creates a nested list of measurements paired with times""""
-    time_vertical_matrix = []
-    for i in range (len(matrix)):
-        time_vertical_matrix += list(map(list, list(zip(matrix[i][1], matrix[i][2]))))
-    return time_vertical_matrix
-                                             
-                
-
-
-
-  #netcdfICON_L0P_EUV_ANCILLARY_2017-05-28_v01r000
-                                                                           
-                                                                        
-    
-    
-
-
-
-
-
-    
-
-    
-    
+    	time_vertical_matrix = []
+    	for i in range(len(matrix)):
+        	time_vertical_matrix += list(map(list, list(zip(matrix[i][1], matrix[i][2]))))
+    	return time_vertical_matrix
