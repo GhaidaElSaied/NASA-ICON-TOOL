@@ -1,3 +1,6 @@
+
+#Computes transformation from euler angles to quaternion and rotation of vectors by quaternion
+
 import numpy as np
 from math import sqrt
 
