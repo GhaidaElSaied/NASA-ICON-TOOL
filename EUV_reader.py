@@ -1,4 +1,3 @@
-
 from netCDF4 import Dataset
 from netCDF4 import ecef_to_enu
 from calc_funcs import convert_time_format, orientations, positions
@@ -17,9 +16,8 @@ def czm_generator_euv(filename):
 	lon = euvdata.variables["ICON_ANCILLARY_EUV_LONGITUDE"]
 	alt = euvdata.variables["ICON_ANCILLARY_EUV_ALTITUDE"]
 
-	unit_vector_vertical = euvdata.variables["ICON_ANCILLARY_EUV_FOV_UNITVECTORS_ECEF"]
-   	
-	vertical = vertical_time(unit_vector_vertical)
+	azimuth = euvdata.variables["ICON_ANCILLARY_EUV_FOV_AZIMUTH_ANGLE"] # 'latitude'
+	zenith = euvdata.variables["ICON_ANCILLARY_EUV_FOV_ZENITH_ANGLE"] # 'longitude'
 
 	position_list = positions(lat, lon, alt, time)
 	orientation_list = orientations(icon_x_hat, icon_y_hat, icon_z_hat, time)
@@ -38,17 +36,16 @@ def czm_generator_euv(filename):
     	end_file = '}]'
 
     	start_file + str(position_list).replace("'",'') + middle_file + str(orientation_list).replace("'",'') + end_file
+
     	f = open(filename[: -3] + '.txt', "w+")
     	f.write(file_complete)
     	f.close();
     	return "file written for " + filename[:-3]
 
 # orientations should be recalculated based on where the EUV is looking
-def orientations():
+# def orientations():
 
-# match all vertical positions
-def vertical_time(matrix):
-    	time_vertical_matrix = []
-    	for i in range(len(matrix)):
-        	time_vertical_matrix += list(map(list, list(zip(matrix[i][1], matrix[i][2]))))
-    	return time_vertical_matrix
+# match all times to azimuth & zenith ranges
+def fov_range_time(time, azimuth, zenith, rad_dist):
+    	time_fov_match_matrix = zip(convert_time_format(time) , [[min(i), max(i)] for i in azimuth], [[min(i), max(i)] for i in zenith], rad_dist)
+    	return time_fov_match_matrix
