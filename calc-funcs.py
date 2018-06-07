@@ -15,7 +15,7 @@ def positions(lat, lon, alt, time):
 	positions = []
 	for i in range(len(lat)):
 		positions += [convert_time_format(time[i]), lon[i], lat[i], (alt[i] * 1000)]
-return positions
+	return positions
 
 def orientations(instra_x_hat,instra_y_hat,instra_z_hat,time):
 	"""Generates a unit Quaternion from the xhat,yhat,zhat,and time"""
