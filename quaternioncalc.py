@@ -86,7 +86,25 @@ def quaternion_conjugate(quat):
     for i in (range(1, len(quat))):
         quat_conjugate.append( -1 * quat[i])
     return quat_conjugate
-    
+
+
+
+def unit_quaternion(quat):
+    """returns the unit quaternion of a non-zero quaternion"""
+    unit_quat = []
+    norm = quat[:]
+    norm = quaternion_norm(norm)
+    for i in range(4):
+        unit_quat.append(quat[i] / norm)
+    return unit_quat
+
+
+def quaternion_norm(quat):
+    norm = 0
+    for i in range(4):
+        norm +=  np.square(quat[i])
+    norm = sqrt(norm)
+    return norm 
     
     
 
