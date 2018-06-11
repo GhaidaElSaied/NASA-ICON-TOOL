@@ -19,8 +19,8 @@ def quaternion_vector(matrix, entry):
     vector = sqrt(entry/2 + (1 - trace)/4)
     return vector
 
-def quaternion_angle(matrix):
-    """returns the angle component of the quaternion"""
+def quaternion_scalar(matrix):
+    """returns the scalar component of the quaternion"""
     trace = np.trace(matrix)
     angle = sqrt(trace + 1)/2
     return angle 
