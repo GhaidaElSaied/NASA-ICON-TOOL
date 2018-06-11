@@ -7,7 +7,7 @@ from math import sqrt
 def euler_rotation_to_quaternion(matrix):
     """returns the quaternion of an euler rotation  as a list in the format theta + i + j + k"""
     quaternion = []
-    quaternion.append(quaternion_angle(matrix))
+    quaternion.append(quaternion_scalar(matrix))
     for i in range(len(matrix)):
         quaternion.append(quaternion_vector(matrix, matrix[i,i]))
     return quaternion 
