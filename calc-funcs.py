@@ -192,10 +192,13 @@ def quaternion_rotation_time(quaternion, vector, time):
 
 
 
-def EUV_to_quaternion(azimuth, zenith):
+def EUV_to_unit_quaternion(azimuth, zenith):
+"""takes in EUV data and converts to a unit quaternion"""
     euler_angles = EUV_to_euler_angle(azimuth, zenith)
     quaternion = euler_rotation_to_quaternion(euler_angles)
-    return quaternion
+    unit_quat = unit_quaternion(quaternion)
+    return unit_quat
+
 
 
 def EUV_to_euler_angle(azimuth, zenith):
