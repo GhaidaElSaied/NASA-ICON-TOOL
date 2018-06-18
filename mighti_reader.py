@@ -17,8 +17,8 @@ def czml_generator_mighti(filename):
   lon = mightidata.variables["ICON_ANCILLARY_MIGHTI_LONGITUDE"]
   alt = mightidata.variables["ICON_ANCILLARY_MIGHTI_ALTITUDE"]
 
-  position_list = calc_funcs.positions(lat, lon, alt, time)
-  orientation_list = calc_funcs.orientations(instra_x_hat, instra_y_hat, instra_z_hat, time)
+  position_list = calc-funcs.positions(lat, lon, alt, time)
+  orientation_list = calc-funcs.orientations(instra_x_hat, instra_y_hat, instra_z_hat, time)
 
   start_file = """[{"version": "1.0", "id": "document"}, 
   {"cylinder" : {
