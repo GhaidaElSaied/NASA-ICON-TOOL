@@ -1,7 +1,7 @@
 from netCDF4 import Dataset
 import numpy as np
 import math
-import calc_funcs
+import calc-funcs
 
 def czml_generator_mighti(filename):
   mightidata = Dataset(filename, "r")
