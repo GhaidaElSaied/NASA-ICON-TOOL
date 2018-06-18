@@ -19,7 +19,7 @@ def czml_generator_mighti(filename):
 
   position_list = calc-funcs.positions(lat, lon, alt, time)
   orientation_list = calc-funcs.orientations(instra_x_hat, instra_y_hat, instra_z_hat, time)
-   start_file = """[{"version": "1.0", "id": "document"},
+  start_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
 		"id" : "mighti",
