@@ -20,7 +20,7 @@ def czml_generator_mighti(filename):
   position_list = calc-funcs.positions(lat, lon, alt, time)
   orientation_list = calc-funcs.orientations(instra_x_hat, instra_y_hat, instra_z_hat, time)
 
- 	label_start = """[{"version": "1.0", "id": "document"}, {"label":
+  label_start = """[{"version": "1.0", "id": "document"}, {"label":
 		{"text": "ICON",
 		"pixelOffset": {
 			"cartesian2": [0.0, 16.0]},
@@ -29,7 +29,7 @@ def czml_generator_mighti(filename):
 		}, "position" : {
 			"cartographicDegrees" :
 	"""
-	path_start = """[{"version": "1.0", "id": "document"}, {
+   path_start = """[{"version": "1.0", "id": "document"}, {
 		"id" : "orbitPath",
 		"path": {
 				"show" : true,
@@ -48,7 +48,7 @@ def czml_generator_mighti(filename):
 			},
 				"position": {
 					"cartographicDegrees" :"""
-	start_file = """[{"version": "1.0", "id": "document"},
+   start_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
 		"id" : "ivma",
@@ -71,14 +71,14 @@ def czml_generator_mighti(filename):
 		},
 		"position": {
 			"cartographicDegrees":"""
-	middle_file = """,
+  middle_file = """,
 			"interpolationAlgorithm": "LAGRANGE"
 		},
 		"orientation": {
 			"interpolationAlgorithm":"LINEAR",
 			"interpolationDegree":1,
 			"unitQuaternion":"""
-	end_file = '}}]'
+  end_file = '}}]'
   file_complete = start_file + str(position_list).replace("'", '') + middle_file + str(orientation_list).replace("'",'')+ end_file
   f.write(file_complete)
   f.close;
