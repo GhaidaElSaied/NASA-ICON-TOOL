@@ -51,8 +51,8 @@ def czml_generator_mighti(filename):
    start_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
-		"id" : "ivma",
-		"name" : "IVM-""" + type + """FOV\"
+		"id" : "mighti",
+		"name" : "MIGHTI-""" + type + """FOV\"
 		"cylinder" : {
 			"length" : 1000000.0,
 			"topRadius" : 0.0,
