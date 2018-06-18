@@ -192,7 +192,7 @@ def quaternion_rotation_time(quaternion, vector, time):
 
 
 
-def EUV_to_unit_quaternion(azimuth, zenith):
+def UV_to_unit_quaternion(azimuth, zenith):
 """takes in EUV data and converts to a unit quaternion"""
     euler_angles = EUV_to_euler_angle(azimuth, zenith)
     quaternion = euler_rotation_to_quaternion(euler_angles)
@@ -201,7 +201,7 @@ def EUV_to_unit_quaternion(azimuth, zenith):
 
 
 
-def EUV_to_euler_angle(azimuth, zenith):
+def UV_to_euler_angle(azimuth, zenith):
     """Takes EUV data and returns and euler angle matrix"""
     phi = math.radians(azimuth)
     theta = math.radians(zenith)
