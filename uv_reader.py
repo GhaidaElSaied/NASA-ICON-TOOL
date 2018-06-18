@@ -1,45 +1,55 @@
 from netCDF4 import Dataset
 import numpy as np
-from calc_funcs import EUV_to_unit_quaternion
+from calc_funcs import UV_to_unit_quaternion
 
-def czml_generator_euv(filename):
-	euvdata = Dataset(filename,"r" )
+def czml_generator_uv(filename):
+	uvdata = Dataset(filename,"r" )
+	type = filename.split("_")[2]
 
-	time = euvdata.variables["ICON_ANCILLARY_EUV_TIME_UTC_STRING"]
+	addition = ""
+	color = "[255, 0, 0, 125]"
+	if type == "EUV":
+		addition = "_STRING"
+		color = "[0, 0, 255, 125]"
 
-	# spacecraft position determines EUV FOV start position
-	lat = euvdata.variables["ICON_ANCILLARY_EUV_LATITUDE"]
-	lon = euvdata.variables["ICON_ANCILLARY_EUV_LONGITUDE"]
-	alt = euvdata.variables["ICON_ANCILLARY_EUV_ALTITUDE"]
+	time = uvdata.variables["ICON_ANCILLARY_" + type + "_TIME_UTC" + addition]
 
-	azimuth = euvdata.variables["ICON_ANCILLARY_EUV_FOV_AZIMUTH_ANGLE"] # 'latitude'
-	zenith = euvdata.variables["ICON_ANCILLARY_EUV_FOV_ZENITH_ANGLE"] # 'longitude'
+	# spacecraft position determines UV FOV start position
+	lat = uvdata.variables["ICON_ANCILLARY_" + type + "_LATITUDE"]
+	lon = uvdata.variables["ICON_ANCILLARY_" + type + "_LONGITUDE"]
+	alt = uvdata.variables["ICON_ANCILLARY_" + type + "_ALTITUDE"]
+
+	azimuth = uvdata.variables["ICON_ANCILLARY_" + type + "_FOV_AZIMUTH_ANGLE"] # 'latitude'
+	zenith = uvdata.variables["ICON_ANCILLARY_" + type + "_FOV_ZENITH_ANGLE"] # 'longitude'
 
 	position_list = positions(lat, lon, alt, time)
 	orientation_list = orientations(azimuth, zenith, time)
 	time_str = time_string(time[0], time[len(time) - 1])
-	print(time_str)
 	start_file = """[{
 	"id" : "document",
-	"name" : "EUV",
+	"name" : """ + "\"" + type + "\"" + """,
 	"version" : "1.0"},
 	{
 		"interpolationDegree" : 5,
 		"referenceFrame" : "INERTIAL",
-		"id" : "cone",
-		"name" : "EUV FOV",
+		"id" : """ + "\"" + type + "\"" + """,
+		"name" : """ + "\"" + type + """ FOV",
 		"availability" : """ + time_str + """,
 		"cylinder" : {
-			"length" : 400000.0,
+			"length" : 1000000.0,
     		"topRadius" : 0.0,
-    		"bottomRadius" : 200000.0,
+    		"bottomRadius" : 500000.0,
     		"material" : {
         		"solidColor" : {
             		"color" : {
-                		"rgba" : [255, 0, 0, 255]
+                		"rgba" : """ + color + """
             		}
         		}
-    		}
+    		},
+			"outline" : true,
+			"outlineColor" : {
+				"rgba" : [0, 0, 0, 255]
+			}
 		},
 		"position" : {
 			"cartographicDegrees" : """
@@ -55,11 +65,11 @@ def czml_generator_euv(filename):
 	f.close();
 	return "file written for " + filename[:-3]
 
-# orientations should be recalculated based on where the EUV is looking
+# orientations should be recalculated based on where the UV is looking
 def orientations(azimuth, zenith, time):
 	orients = []
 	for pair in map(list, zip(azimuth, zenith, time)):
-		orients += [convert_time_format(pair[2])] + EUV_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
+		orients += [convert_time_format(pair[2])] + UV_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
 	return orients
 
 # match all times to azimuth & zenith ranges
