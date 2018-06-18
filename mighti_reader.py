@@ -80,6 +80,15 @@ def czml_generator_mighti(filename):
 			"unitQuaternion":"""
   end_file = '}}]'
   file_complete = start_file + str(position_list).replace("'", '') + middle_file + str(orientation_list).replace("'",'')+ end_file
+  label_file = label_start + position_str + end_file
+  path_file = path_start + position_str + end_file
+  label_f = open("label.txt", "w+")
+  path_f = open("path.txt", "w+")
   f.write(file_complete)
-  f.close;
+  label_f.write(label_file)
+  path_f.write(path_file)
+  f.close()
+  label_f.close()
+  path_f.write()
+  
   return "file written for" + filename
