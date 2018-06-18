@@ -55,5 +55,5 @@ def czml_generator_mighti(filename):
   f.write(file_complete)
   f.close()
 
-  
+   
   return "file written for" + filename
