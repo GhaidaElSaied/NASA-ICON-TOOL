@@ -19,35 +19,6 @@ def czml_generator_mighti(filename):
 
   position_list = calc-funcs.positions(lat, lon, alt, time)
   orientation_list = calc-funcs.orientations(instra_x_hat, instra_y_hat, instra_z_hat, time)
-
-  label_start = """[{"version": "1.0", "id": "document"}, {"label":
-		{"text": "ICON",
-		"pixelOffset": {
-			"cartesian2": [0.0, 16.0]},
-			"scale": 0.5,
-			"show": true
-		}, "position" : {
-			"cartographicDegrees" :
-	"""
-   path_start = """[{"version": "1.0", "id": "document"}, {
-		"id" : "orbitPath",
-		"path": {
-				"show" : true,
-				"width": 2,
-				"trailTime": 0,
-				"resolution": 120,
-				"leadTime": 0,
-				"trailTime": 10000,
-				"material": {
-					"solidColor": {
-						"color": {
-							"rgba": [255, 0, 255, 125]
-						}
-					}
-				}
-			},
-				"position": {
-					"cartographicDegrees" :"""
    start_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
@@ -80,15 +51,9 @@ def czml_generator_mighti(filename):
 			"unitQuaternion":"""
   end_file = '}}]'
   file_complete = start_file + str(position_list).replace("'", '') + middle_file + str(orientation_list).replace("'",'')+ end_file
-  label_file = label_start + position_str + end_file
-  path_file = path_start + position_str + end_file
-  label_f = open("label.txt", "w+")
-  path_f = open("path.txt", "w+")
+
   f.write(file_complete)
-  label_f.write(label_file)
-  path_f.write(path_file)
   f.close()
-  label_f.close()
-  path_f.write()
+
   
   return "file written for" + filename
