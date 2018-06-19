@@ -1,6 +1,6 @@
 from netCDF4 import Dataset
 import numpy as np
-from calc_funcs import UV_to_unit_quaternion
+from calc_funcs import orientation_to_unit_quaternion
 
 def czml_generator_uv(filename):
 	uvdata = Dataset(filename,"r" )
