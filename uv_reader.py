@@ -69,7 +69,7 @@ def czml_generator_uv(filename):
 def orientations(azimuth, zenith, time):
 	orients = []
 	for pair in map(list, zip(azimuth, zenith, time)):
-		orients += [convert_time_format(pair[2])] + UV_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
+		orients += [convert_time_format(pair[2])] + orientation_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
 	return orients
 
 # match all times to azimuth & zenith ranges
