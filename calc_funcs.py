@@ -207,6 +207,11 @@ def orientation_to_euler_angle(azimuth, zenith):
     theta = math.radians(zenith)
     euler_angles = numpy.array([[-1*math.sin(phi), math.cos(phi), 0], [-math.cos(theta) * math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta)], [math.sin(theta) * math.cos(phi), math.sin(theta) * math.sin(phi), math.cos(theta)]])
     return euler_angles
-    
+   
+def orientations(azimuth, zenith, time):
+	orients = []
+	for pair in map(list, zip(azimuth, zenith, time)):
+		orients += [convert_time_format(pair[2])] + UV_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
+	return orients
     
 
