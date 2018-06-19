@@ -16,7 +16,7 @@ def czml_generator_mighti(filename):
   alt = mightidata.variables["ICON_ANCILLARY_MIGHTI_ALTITUDE"]
 
   position_list = calc_funcs.positions(lat, lon, alt, time)
-  orientation_list = calc_funcs.orientation_to_unit_quaternion(azimuth, 0, time)
+  orientation_list = calc_funcs.orientations(azimuth, 0, time)
   start_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
