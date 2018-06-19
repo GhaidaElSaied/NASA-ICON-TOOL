@@ -5,20 +5,18 @@ import calc_funcs
 
 def czml_generator_mighti(filename):
   mightidata = Dataset(filename, "r")
+  type = filename.split("_")[2].split("-")[1]
 
   time = mightidata.variables["ICON_ANCILLARY_MIGHTI_TIME_UTC_STRING"]
-  #determine orientation of spacecraft
-  instra_x_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_INSTRA_X_ECEF"]
-  instra_y_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_INSTRA_Y_ECEF"]
-  instra_z_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_INSTRA_Z_ECEF"]
-  
+  #determine orientation of MIGTHI instrument
+  azimuth  = mightidata.variables["ICON_ANCILLARY_MIGHTI_FOV_AZIMUTH"]
   #determine position of spacecraft
   lat = mightidata.variables["ICON_ANCILLARY_MIGHTI_LATITUDE"]
   lon = mightidata.variables["ICON_ANCILLARY_MIGHTI_LONGITUDE"]
   alt = mightidata.variables["ICON_ANCILLARY_MIGHTI_ALTITUDE"]
 
   position_list = calc_funcs.positions(lat, lon, alt, time)
-  orientation_list = calc_funcs.orientations(instra_x_hat, instra_y_hat, instra_z_hat, time)
+  orientation_list = calc_funcs.UV_to_unit_quaternion(azimuth, 0, time)
   start_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
