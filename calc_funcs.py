@@ -194,7 +194,7 @@ def quaternion_rotation_time(quaternion, vector, time):
 
 def orientation_to_unit_quaternion(azimuth, zenith):
     """takes in orientation data and converts to a unit quaternion"""
-    euler_angles = angular_to_euler_angle(azimuth, zenith)
+    euler_angles = orientation_to_euler_angle(azimuth, zenith)
     quaternion = euler_rotation_to_quaternion(euler_angles)
     unit_quat = unit_quaternion(quaternion)
     return unit_quat
