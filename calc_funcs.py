@@ -135,7 +135,7 @@ def scalar_compute_quat(quat_1, quat_2):
     del vector_2[0]
     new_scalar = 0
     new_scalar += quat_1[0] * quat_2[0]
-    new_scalar -= np.dot(vector_1, vector_2)
+    new_scalar -= numpy.dot(vector_1, vector_2)
     return new_scalar
 
 
@@ -208,10 +208,10 @@ def orientation_to_euler_angle(azimuth, zenith):
     euler_angles = numpy.array([[-1*math.sin(phi), math.cos(phi), 0], [-math.cos(theta) * math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta)], [math.sin(theta) * math.cos(phi), math.sin(theta) * math.sin(phi), math.cos(theta)]])
     return euler_angles
    
-def orientations(azimuth, zenith, time):
+def orientations_horizontal_coordinate(azimuth, zenith, time):
 	orients = []
 	for pair in map(list, zip(azimuth, zenith, time)):
-		orients += [convert_time_format(pair[2])] + UV_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
+		orients += [convert_time_format(pair[2])] + orientation_to_unit_quaternion(numpy.mean(pair[0].data), numpy.mean(pair[1].data))
 	return orients
     
 
