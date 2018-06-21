@@ -70,4 +70,3 @@ def czml_generator_mighti(filename):
 
 
   return "file written for" + filename
-  czml_generator_mighti("ICON_L0P_MIGHTI-A_Ancillary_2017-05-27_v01r000.NC")
