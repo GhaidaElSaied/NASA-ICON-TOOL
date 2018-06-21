@@ -214,4 +214,5 @@ def orientations_horizontal_coordinate(azimuth, zenith, time):
 		orients += [convert_time_format(pair[2])] + orientation_to_unit_quaternion(numpy.mean(pair[0].data), numpy.mean(pair[1].data))
 	return orients
     
-
+def get_fov_mighti(bottom_left, bottom_right, top_left, top_right):
+	return numpy.array([bottom_left, bottom_right, top_left, top_right])
