@@ -1,4 +1,5 @@
-import math, numpy
+import math, 
+as np 
 
 def convert_time_format(time):
 	"""Converts time stamps from the netCDF to the form for czml "2018-02-09T00:00:00+00:00"""
@@ -24,8 +25,8 @@ def orientations(instra_x_hat,instra_y_hat,instra_z_hat,time):
 		x = instra_x_hat[i]
 		y = instra_y_hat[i]
 		z = instra_z_hat[i]
-		rotation_matrix = numpy.matrix([x,y,z])
-		quaternion = numpy.roll(quaternion_from_matrix(rotation_matrix),3) 
+		rotation_matrix = np.matrix([x,y,z])
+		quaternion = np.roll(quaternion_from_matrix(rotation_matrix),3) 
 		time_string = convert_time_format(time[i])
 		unitQuaternions += time_string,(-1*quaternion[0]),(-1*quaternion[1]),(-1*quaternion[2]),quaternion[3]
 	return unitQuaternions
@@ -37,10 +38,10 @@ def quaternion_from_matrix(matrix, isprecise=False):
     matrix and a faster algorithm is used.
 
  	"""
-    M = numpy.array(matrix, dtype=numpy.float64, copy=False)[:4, :4]
+    M = np.array(matrix, dtype=np.float64, copy=False)[:4, :4]
     if isprecise:
-        q = numpy.empty((4, ))
-        t = numpy.trace(M)
+        q = np.empty((4, ))
+        t = np.trace(M)
         if t > M[3, 3]:
             q[0] = t
             q[3] = M[1, 0] - M[0, 1]
@@ -70,16 +71,16 @@ def quaternion_from_matrix(matrix, isprecise=False):
         m21 = M[2, 1]
         m22 = M[2, 2]
         # symmetric matrix K
-        K = numpy.array([[m00-m11-m22, 0.0,         0.0,         0.0],
+        K = np.array([[m00-m11-m22, 0.0,         0.0,         0.0],
                          [m01+m10,     m11-m00-m22, 0.0,         0.0],
                          [m02+m20,     m12+m21,     m22-m00-m11, 0.0],
                          [m21-m12,     m02-m20,     m10-m01,     m00+m11+m22]])
         K /= 3.0
         # quaternion is eigenvector of K that corresponds to largest eigenvalue
-        w, V = numpy.linalg.eigh(K)
-        q = V[[3, 0, 1, 2], numpy.argmax(w)]
+        w, V = np.linalg.eigh(K)
+        q = V[[3, 0, 1, 2], np.argmax(w)]
     if q[0] < 0.0:
-        numpy.negative(q, q)
+        np.negative(q, q)
     return q
 
 
@@ -95,13 +96,13 @@ def euler_rotation_to_quaternion(matrix):
     
 def quaternion_vector(matrix, entry):
     """returns the vector component of quaternion"""
-    trace = numpy.trace(matrix)
+    trace = np.trace(matrix)
     vector = math.sqrt(entry/2 + (1 - trace)/4)
     return vector
 
 def quaternion_scalar(matrix):
     """returns the scalar component of the quaternion"""
-    trace = numpy.trace(matrix)
+    trace = np.trace(matrix)
     scalar = math.sqrt(trace + 1)/2
     return scalar
 
@@ -135,7 +136,7 @@ def scalar_compute_quat(quat_1, quat_2):
     del vector_2[0]
     new_scalar = 0
     new_scalar += quat_1[0] * quat_2[0]
-    new_scalar -= numpy.dot(vector_1, vector_2)
+    new_scalar -= np.dot(vector_1, vector_2)
     return new_scalar
 
 
@@ -144,7 +145,7 @@ def vector_compute_quat(quat_1, quat_2):
     product_vector = []
     vector_1, vector_2 = quat_1[1:], quat_2[1:]
     scalar_1, scalar_2 = quat_1[0], quat_2[0]
-    cross_product = numpy.cross(vector_1, vector_2)
+    cross_product = np.cross(vector_1, vector_2)
     for i in range(3):
         vector_2[i] = vector_2[i] * scalar_1
     for j in range(3):
@@ -177,7 +178,7 @@ def unit_quaternion(quat):
 def quaternion_norm(quat):
     norm = 0
     for i in range(4):
-        norm +=  numpy.square(quat[i])
+        norm +=  np.square(quat[i])
     norm = sqrt(norm)
     return norm
 
@@ -205,7 +206,7 @@ def orientation_to_euler_angle(azimuth, zenith):
     """Takes EUV data and returns and euler angle matrix"""
     phi = math.radians(azimuth)
     theta = math.radians(zenith)
-    euler_angles = numpy.array([[-1*math.sin(phi), math.cos(phi), 0], [-math.cos(theta) * math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta)], [math.sin(theta) * math.cos(phi), math.sin(theta) * math.sin(phi), math.cos(theta)]])
+    euler_angles = np.array([[-1*math.sin(phi), math.cos(phi), 0], [-math.cos(theta) * math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta)], [math.sin(theta) * math.cos(phi), math.sin(theta) * math.sin(phi), math.cos(theta)]])
     return euler_angles
    
 def orientations_horizontal_coordinate(azimuth, zenith, time):
@@ -216,7 +217,7 @@ def orientations_horizontal_coordinate(azimuth, zenith, time):
     
 def get_fov_mighti(bottom_left, bottom_right, top_left, top_right):
 	"""put the vectors for MIGHTI FOV into array"""
-	return numpy.array([bottom_left, bottom_right, top_left, top_right])
+	return np.array([bottom_left, bottom_right, top_left, top_right])
 
 def ivm_b_data_for_demo(instra_x_hat, instra_y_hat, instra_z_hat, time):
 	"""uses IVM-A FOV to provide the missing IVM-B FOV"""
