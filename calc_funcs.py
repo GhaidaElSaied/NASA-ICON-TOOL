@@ -215,4 +215,44 @@ def orientations_horizontal_coordinate(azimuth, zenith, time):
 	return orients
     
 def get_fov_mighti(bottom_left, bottom_right, top_left, top_right):
+	"""put the vectors for MIGHTI FOV into array"""
 	return numpy.array([bottom_left, bottom_right, top_left, top_right])
+
+def ivm_b_data_for_demo(instra_x_hat, instra_y_hat, instra_z_hat, time):
+	"""uses IVM-A FOV to provide the missing IVM-B FOV"""
+	rotated_fov = rotate_ivm_fov(instra_x_hat, instra_y_hat, instra_z_hat):
+	x, y, z = rotated_fov[0], rotated_fov[1], rotated_fov[2]
+	orientation_list = orientations(x, y, z, time)
+	return orientation_list
+	
+	
+	
+def rotate_ivm_fov(instra_x_hat, instra_y_hat, instra_z_hat):
+	"""rotates the ivm fov by 180 degrees in the x coordinate to provide data for other ivm (only for demo)"""
+	euler_rotation = np.eye(3)
+	np.fill_diagonal(euler_rotation, -1)
+	euler_rotation[2][2] = 1
+	quat_rotator = euler_rotation_to_quaternion(euler_rotation)
+	vectors = create_vector(instra_x_hat, instra_y_hat, instra_z_hat)
+	rotated_vectors = []
+	for i in range(len(vectors)):
+		rotated_vectors.append(quaternion_rotation(quat_rotator, vectors[i].tolist()))
+	rotated_vectors_array = np.asarray(rotated_vectors)
+	rotated_x, rotated_y, rotated_z = rotated_vectors_array[:, 0].tolist(), rotated_vectors_array[:, 1].tolist(), rotated_vectors_array[:, 2].tolist()
+	return rotated_x, rotated_y, rotated_z
+
+def rotation_for_demo_in_quaternion():
+	"""returns a rotation by 180 horizontal degrees for data"""
+	euler_rotation = np.eye(3)
+	np.fill_diagonal(euler_rotation, -1)
+	euler_rotation[2][2] = 1
+	quat_rotator = euler_rotation_to_quaternion(euler_rotation)
+	return quat_rotator
+
+def create_vector(instra_x_hat, instra_y_hat, instra_z_hat):
+	#puts vector components into vectors to be rotated
+	vector_list = []
+	for i in range(len(instra_x_hat)):
+		vector_list.append([instra_x_hat[i], instra_y_hat[i],instra_z_hat[i]])
+	vector_array = np.array(vector_list)
+	return vector_array
