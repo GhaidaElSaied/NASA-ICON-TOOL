@@ -1,5 +1,4 @@
-import math, 
-as np 
+import math, import numpy as np 
 
 def convert_time_format(time):
 	"""Converts time stamps from the netCDF to the form for czml "2018-02-09T00:00:00+00:00"""
