@@ -7,30 +7,163 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
-  <title>EUV Demo</title>
+  <title>FOV Demo</title>
   <script src="../Build/Cesium/Cesium.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link href = "https://bootswatch.com/4/lux/bootstrap.min.css" rel = "stylesheet" type = "text/css" />
   <style>
       @import url(../Build/Cesium/Widgets/widgets.css);
       html, body, #cesiumContainer {
-          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      #dropButton, #orbitButton {
+        background-color: #2f69c6;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        position: relative;
+        border-radius: 10px;
+      }
+
+      .toolbar, .orbitBtn {
+        position: absolute !important;
+        display: inline-block;
+        top: 70px;
+        left: 300px;
+      }
+
+      .orbitBtn {
+        left: 450px;
+      }
+
+      .instrumentFOVs {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+
+      .instrumentFOVs a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+      .instrumentFOVs a:hover {
+        background-color: #ddd;
+      }
+
+      .toolbar:hover .instrumentFOVs {
+        display: block;
+      }
+
+      .toolbar:hover #dropButton, .orbitBtn:hover #orbitButton {
+        background-color: #4286f4;
       }
   </style>
 </head>
 <body>
-  <div id="cesiumContainer"></div>
-  <script>
-    var viewer = new Cesium.Viewer('cesiumContainer', {
-      shouldAnimate: true
-    });
-    var czmlSrc = new Cesium.CzmlDataSource.load("ICON_L0P_EUV_Ancillary_2017-05-27_v01r000.txt");
-    viewer.dataSources.add(czmlSrc);
-    viewer.timeline.zoomTo(viewer.clock.currentTime, viewer.clock.stopTime);
-    var terrainProvider = Cesium.createWorldTerrain({
-      requestVertexNormals: true,
-      requestWaterMask: true
-    });
-    viewer.terrainProvider = terrainProvider;
-    viewer.scene.globe.enableLighting = true;
-  </script>
+  <div class = "container">
+    <h1>FOV Demo</h1>
+    <div id = "cesiumContainer">
+      <script>
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkZDQwODk2ZS02MGI0LTQyYzItYTVlNi1mNGVkZGVkZDQxZDAiLCJpZCI6MTU1MiwiaWF0IjoxNTI4OTExNTQyfQ.HWE9MST2orEGW-gW5uuIHz2-EyuM1zIyfBiYg6h-gtg';
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+          shouldAnimate: true
+        });
+
+        //viewer.extend(Cesium.viewerDragDropMixin, { clearOnDrop : false });
+
+        var euvSrc = new Cesium.CzmlDataSource("EUVData");
+        var ivmaSrc = new Cesium.CzmlDataSource("IVMAData");
+        var fuvSrc = new Cesium.CzmlDataSource("FUVData");
+        var mightiaSrc = new Cesium.CzmlDataSource("MIGHTIAData");
+        //var ivmbSrc = new Cesium.CzmlDataSource("IVMBData");
+        var labelSrc = new Cesium.CzmlDataSource("LabelData");
+        var pathSrc = new Cesium.CzmlDataSource("PathData");
+
+        var ivmaData = ivmaSrc.load("ICON_L0P_IVM-A_Ancillary_2017-05-27_v01r001.txt");
+        // var ivmbData = ivmbSrc.load("ICON_L0P_IVM-B_Ancillary_2017-05-27_v01r001.txt");
+        var euvData = euvSrc.load("ICON_L0P_EUV_Ancillary_2017-05-27_v01r000.txt");
+        var fuvData = fuvSrc.load("ICON_L0P_FUV_Ancillary_2017-05-27_v01r000.txt");
+        var mightiaData = mightiaSrc.load("ICON_L0P_MIGHTI-A_Ancillary_2017-05-27_v01r000.txt");
+        // var mightibData = mightib.load("ICON_L0P_MIGHTI-B_Ancillary_2017-05-27_v01r001.txt");
+        var labelData = labelSrc.load("label.txt");
+        var pathData = pathSrc.load("path.txt");
+
+        viewer.dataSources.add(ivmaData);
+        // viewer.dataSources.add(ivmbData);
+        viewer.dataSources.add(euvData);
+        viewer.dataSources.add(fuvData);
+        viewer.dataSources.add(mightiaData);
+        // viewer.dataSources.add(mightibData);
+        viewer.dataSources.add(labelData);
+        viewer.dataSources.add(pathData);
+
+        viewer.timeline.zoomTo(viewer.clock.currentTime, viewer.clock.stopTime);
+
+        var terrainProvider = Cesium.createWorldTerrain({
+          requestVertexNormals: true,
+          requestWaterMask: true
+        });
+
+        viewer.terrainProvider = terrainProvider;
+        viewer.scene.globe.enableLighting = true;
+
+        $(document).ready(function() {
+          $("#ivmaFOV").click(function() {
+              var ivmaFOV = ivmaSrc.entities.getById("ivma");
+              ivmaFOV.show = !ivmaFOV.show;
+          });
+          // $("#ivmbFOV").click(function() {
+          //     var ivmbFOV = ivmbSrc.entities.getById("cone");
+          //     ivmbFOV.show = !ivmbFOV.show;
+          // });
+          $("#euvFOV").click(function() {
+              var euvFOV = euvSrc.entities.getById("EUV");
+              euvFOV.show = !euvFOV.show;
+          });
+          $("#fuvFOV").click(function() {
+              var fuvFOV = fuvSrc.entities.getById("FUV");
+              fuvFOV.show = !fuvFOV.show;
+          });
+          $("#mightiaFOV").click(function() {
+              var mightiaFOV = mightiaSrc.entities.getById("mighti");
+              mightiaFOV.show = !mightiaFOV.show;
+          });
+          // $("#mightibFOV").click(function() {
+          //     var mightibFOV = mightibSrc.entities.getById("cone");
+          //     mightibFOV.show = !mightibFOV.show;
+          // });
+          $("#orbitButton").click(function() {
+            var path = pathSrc.entities.getById("orbitPath");
+            path.show = !path.show;
+          })
+        });
+      </script>
+      <div class = "toolbar">
+        <button id = "dropButton" class = "dropButton">Toggle FOVs</button>
+        <div class = "instrumentFOVs">
+          <a href = "#" class = "instr" id = "ivmaFOV">IVM-A</a>
+          <a href = "#" class = "instr" id = "ivmbFOV">IVM-B</a>
+          <a href = "#" class = "instr" id = "euvFOV">EUV</a>
+          <a href = "#" class = "instr" id = "fuvFOV">FUV</a>
+          <a href = "#" class = "instr" id = "mightiaFOV">MIGHTI-A</a>
+          <a href = "#" class = "instr" id = "mightibFOV">MIGHTI-B</a>
+        </div>
+      </div>
+      <div class = "orbitBtn">
+        <button id = "orbitButton">Toggle Path</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
