@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>ICON Data Visualization Demo</title>
+  <script src="../Build/Cesium/Cesium.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script type="text/javascript">
+      if(typeof require === "function") {
+          require.config({
+              baseUrl : 'Cesium-1.23/Source',
+              waitSeconds : 120
+          });
+      }
+  </script>
+  <link href = "https://bootswatch.com/4/lux/bootstrap.min.css" rel = "stylesheet" type = "text/css" />
+  <style>
+      @import url(../Build/Cesium/Widgets/widgets.css);
+      html, body, #cesiumContainer {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      #dropButton, #orbitButton {
+        background-color: #2f69c6;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        position: relative;
+        border-radius: 10px;
+      }
+      .toolbar, .orbitBtn {
+        position: absolute !important;
+        display: inline-block;
+        top: 70px;
+        left: 300px;
+      }
+      .orbitBtn {
+        left: 450px;
+      }
+      .instrumentFOVs {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+      .instrumentFOVs a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+      .instrumentFOVs a:hover {
+        background-color: #ddd;
+      }
+      .toolbar:hover .instrumentFOVs {
+        display: block;
+      }
+      .toolbar:hover #dropButton, .orbitBtn:hover #orbitButton {
+        background-color: #4286f4;
+      }
+  </style>
+</head>
+<body>
+  <style>
+  		@import url(Cesium-1.23/Build/Cesium/Widgets/widgets.css);
+  		@import url(stylesheet.css);
+  </style>
+  <div class = "container">
+    <h1>Visualization Demo</h1>
+    <div id = "cesiumContainer">
+      <script>
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkZDQwODk2ZS02MGI0LTQyYzItYTVlNi1mNGVkZGVkZDQxZDAiLCJpZCI6MTU1MiwiaWF0IjoxNTI4OTExNTQyfQ.HWE9MST2orEGW-gW5uuIHz2-EyuM1zIyfBiYg6h-gtg';
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+          shouldAnimate: true
+        });
+        <script id="cesium_sandcastle_script">
+        Cesium.BingMapsApi.defaultKey = 'AgbxlbJ9C_r--t2dhc4RofHZ3bDl6u9Eqm8Cjjdt8vhBpZGrNA8Ffejf1IYX_MW5';
+          var viewer = new Cesium.Viewer('cesiumContainer');
+          var tomorrow = viewer.clock.currentTime;
+          Cesium.JulianDate.addDays(viewer.clock.currentTime, 1, tomorrow);
+          tomorrow = String(tomorrow);
+          var yesterday = viewer.clock.currentTime;
+          Cesium.JulianDate.addDays(viewer.clock.currentTime, -1, yesterday);
+          yesterday = String(yesterday);
+          var nativePicker = document.querySelector('.nativeDatePicker');
+          var fallbackPicker = document.querySelector('.fallbackDatePicker');
+          var fallbackLabel = document.querySelector('.fallbackLabel');
+          var yearSelect = document.querySelector('#year');
+          var monthSelect = document.querySelector('#month');
+          var daySelect = document.querySelector('#day');
+          var update = document.querySelector('#updateDate');
+          // hide fallback initially
+          fallbackPicker.style.display = 'none';
+          fallbackLabel.style.display = 'none';
+          // test whether a new date input falls back to a text input or not
+          var test = document.createElement('input');
+          test.type = 'date';
+          Date.prototype.isLeapYear = function() {
+              var year = this.getFullYear();
+              if((year & 3) != 0) return false;
+              return ((year % 100) != 0 || (year % 400) == 0);
+          };
+          // Get Day of Year
+          Date.prototype.getDOY = function() {
+              var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+              var mn = this.getMonth();
+              var dn = this.getDate();
+              var dayOfYear = dayCount[mn] + dn;
+              if(mn > 1 && this.isLeapYear()) dayOfYear++;
+              return yearSelect.value + '-' + String(dayOfYear).zfill();
+          };
+          Date.prototype.getPrevDay = function() {
+              var dayCount = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+              var mn = this.getMonth();
+              var dn = this.getDate();
+              var dayOfYear = dayCount[mn] + dn - 1;
+              if(mn > 1 && this.isLeapYear()) dayOfYear++;
+              return yearSelect.value + '-' + String(dayOfYear).zfill();
+          };
+          String.prototype.zfill = function() {
+          	var str = this
+          	while (str.length < 3) {
+          		str = "0" + str;
+          	};
+          	return str;
+          };
+          function loadData(dayOfY) {
+          	Cesium.loadJson("fileMap.json").then(function(json) {
+                  var file = json[dayOfY]; // access the json to get path
+          		var ICONdata = new Cesium.CzmlDataSource();
+          	 	ICONdata.load("ICONData/czml/" + file).then(function(){
+          			viewer.dataSources.add(ICONdata);
+          			viewer.clock.multiplier = 1;
+              	});
+             	});
+          };
+          // if it does, run the code inside the if() {} block
+          if(test.type === 'text') {
+            // hide the native picker and show the fallback
+            nativePicker.style.display = 'none';
+            fallbackPicker.style.display = 'block';
+            fallbackLabel.style.display = 'block';
+            // populate the days and years dynamically
+            // (the months are always the same, therefore hardcoded)
+            populateDays(monthSelect.value);
+          }
+          function populateDays(month) {
+            // delete the current set of <option> elements out of the
+            // day <select>, ready for the next set to be injected
+            while(daySelect.firstChild){
+              daySelect.removeChild(daySelect.firstChild);
+            }
+            // Create variable to hold new number of days to inject
+            var dayNum;
+            // 31 or 30 days?
+            if(month === 'January' || month === 'March' || month === 'May' || month === 'July' || month === 'August' || month === 'October' || month === 'December') {
+              dayNum = 31;
+            } else if(month === 'April' || month === 'June' || month === 'September' || month === 'November') {
+              dayNum = 30;
+            } else {
+            // If month is February, calculate whether it is a leap year or not
+              var year = yearSelect.value;
+              dayNum = 28;
+            }
+            // inject the right number of new <option> elements into the day <select>
+            for(var i = 1; i <= dayNum; i++) {
+              var option = document.createElement('option');
+              option.textContent = i;
+              daySelect.appendChild(option);
+            }
+            // if previous day has already been set, set daySelect's value
+            // to that day, to avoid the day jumping back to 1 when you
+            // change the year
+            if(previousDay) {
+              daySelect.value = previousDay;
+              // If the previous day was set to a high number, say 31, and then
+              // you chose a month with less total days in it (e.g. February),
+              // this part of the code ensures that the highest day available
+              // is selected, rather than showing a blank daySelect
+              if(daySelect.value === "") {
+                daySelect.value = previousDay - 1;
+              }
+              if(daySelect.value === "") {
+                daySelect.value = previousDay - 2;
+              }
+              if(daySelect.value === "") {
+                daySelect.value = previousDay - 3;
+              }
+            }
+          }
+          // when the month or year <select> values are changed, rerun populateDays()
+          // in case the change affected the number of available days
+          monthSelect.onchange = function() {
+            populateDays(monthSelect.value);
+          };
+          //preserve day selection
+          var previousDay;
+          // update what day has been set to previously
+          // see end of populateDays() for usage
+          daySelect.onchange = function() {
+            previousDay = daySelect.value;
+          };
+          update.onclick = function() {
+            	viewer.dataSources.removeAll();
+              var dat = new Date('1 ' + monthSelect.value + ' 1999');
+              var mon = dat.getMonth();
+              var newDay = new Date(Date.UTC(yearSelect.value, mon, daySelect.value, 8, 0, 0));
+            	var day = String(newDay.toISOString().substr(0,10));
+            	viewer.clock.multiplier = 1;
+          	// load data using day of year
+
+          	loadData(newDay.getDOY());
+          	loadData(newDay.getPrevDay());
+            	viewer.clock.currentTime = Cesium.JulianDate.fromIso8601(day);
+            	//update timeline
+            	var timelineLastDay = Cesium.JulianDate.fromIso8601(day);
+            	var timelineFirstDay = Cesium.JulianDate.fromIso8601(day);
+            	Cesium.JulianDate.addDays(Cesium.JulianDate.fromIso8601(day), 4, timelineLastDay);
+            	Cesium.JulianDate.addDays(Cesium.JulianDate.fromIso8601(day), -4, timelineFirstDay);
+            	viewer.timeline.zoomTo(timelineFirstDay,timelineLastDay);
+          };
+          var lastLoaded = String(viewer.clock.currentTime).substr(0,10);
+          var myListener = function (clock){
+            var today = new Date(String(viewer.clock.currentTime).substr(0,10) + 'T00:00:00');
+            if (lastLoaded != String(viewer.clock.currentTime).substr(0,10)){
+                today.setDate(today.getDate() - 1);
+                loadData(today.getDOY());
+          	  lastLoaded = String(viewer.clock.currentTime).substr(0,10);
+                today.setDate(today.getDate() + 1);
+                loadData(today.getDOY());
+              }
+            };
+          viewer.clock.onTick.addEventListener(myListener, function(clock) {
+            var lastLoaded = String(viewer.clock.currentTime).substr(0,10);
+          });
+
+        $(document).ready(function() {
+          $("#ivmaFOV").click(function() {
+            var ivmaFOV = viewer.dataSources.ICONdata("ivma")
+            ivmaFOV.show = !ivmaFOV.show;
+          })
+          $("#ivmbFOV").click(function() {
+            var ivmbFOV = ivmbSrc.entities.getById("cone");
+           ivmbFOV.show = !ivmbFOV.show;
+         })
+         $("#euvFOV").click(function() {
+           var euvFOV = viewer.dataSources.ICONdata("EUV");
+           euvFOV.show = !euvFOV.show;
+         })
+         $("#fuvFOV").click(function() {
+           var fuvFOV = viewer.dataSources.ICONdata("FUV");
+           fuvFOV.show = !fuvFOV.show;
+         })
+         $("#mightiaFOV").click(function() {
+           var mightiaFOV = viewer.dataSources.ICONdata("mighti");
+           mightiaFOV.show = !mightiaFOV.show;
+         })
+         $("#mightibFOV").click(function() {
+           var mightibFOV = viewer.dataSources.ICONdata("cone");
+           mightibFOV.show = !mightibFOV.show;
+         })
+         $("#orbitButton").click(function(){
+           var orbit = viewer.dataSources.ICONdata("coordinates");
+           orbit.show = !orbit.show;
+
+
+       })
+        });
+      </script>
+      <div class = "toolbar">
+        <button id = "dropButton" class = "dropButton">Toggle FOVs</button>
+        <div class = "instrumentFOVs">
+          <a href = "#" class = "instr" id = "ivmaFOV">IVM-A</a>
+          <a href = "#" class = "instr" id = "ivmbFOV">IVM-B</a>
+          <a href = "#" class = "instr" id = "euvFOV">EUV</a>
+          <a href = "#" class = "instr" id = "fuvFOV">FUV</a>
+          <a href = "#" class = "instr" id = "mightiaFOV">MIGHTI-A</a>
+          <a href = "#" class = "instr" id = "mightibFOV">MIGHTI-B</a>
+        </div>
+      </div>
+      <div class = "orbitBtn">
+              <button id = "orbitButton">Toggle Orbit</button>
+              <div id = "timetoolbar">
+                <table>
+                    <form>
+                    <div class="nativeDatePicker">
+                      <span class="validity"></span>
+                    </div>
+                    <p class="fallbackLabel">Jump to Date:</p>
+                    <div class="fallbackDatePicker">
+                        <span>
+                        <label for="day">Day:</label>
+                          <select id="day" name="day">
+                          </select>
+                        </span>
+                      <span>
+                        <label for="month">Month:</label>
+                        <select id="month" name="month">
+                          <option selected>January</option>
+                          <option>February</option>
+                          <option>March</option>
+                          <option>April</option>
+                          <option>May</option>
+                          <option>June</option>
+                          <option>July</option>
+                          <option>August</option>
+                          <option>September</option>
+                          <option>October</option>
+                          <option>November</option>
+                          <option>December</option>
+                        </select>
+                      </span>
+
+                      <span>
+
+                        <label for="year">Year:</label>
+                        <select id="year" name="year">
+                          <option>2017</option>
+                          <option>2018</option>
+                        </select>
+                      </span>
+                      <span>
+                        <button id="updateDate" type= "button" >Update</button>
+                      </span>
+                    </div>
+                  </form>
+                </table>
+
+              </div>
+    </div>
+
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
