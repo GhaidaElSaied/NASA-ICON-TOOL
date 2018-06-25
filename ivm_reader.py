@@ -18,7 +18,7 @@ def czml_generator_ivm(filename):
 	
 	position_list = calc_funcs.positions(lat,lon,alt,time)
 	ivma_orientation_list = calc_funcs.orientations(instra_x_hat,instra_y_hat,instra_z_hat,time)
-	ivmb_orientation_list = calc_funcs.orientatins(ivmb_x, ivmb_y, ivmb_z, time)
+	ivmb_orientation_list = calc_funcs.orientations(ivmb_x, ivmb_y, ivmb_z, time)
 
 	label_start = """[{"version": "1.0", "id": "document"}, {"label":
 		{"text": "ICON",
