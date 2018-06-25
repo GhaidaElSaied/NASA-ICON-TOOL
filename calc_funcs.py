@@ -218,14 +218,6 @@ def get_fov_mighti(bottom_left, bottom_right, top_left, top_right):
 	"""put the vectors for MIGHTI FOV into array"""
 	return np.array([bottom_left, bottom_right, top_left, top_right])
 
-def ivm_b_data_for_demo(instra_x_hat, instra_y_hat, instra_z_hat, time):
-	"""uses IVM-A FOV to provide the missing IVM-B FOV"""
-	rotated_fov = rotate_ivm_fov(instra_x_hat, instra_y_hat, instra_z_hat):
-	x, y, z = rotated_fov[0], rotated_fov[1], rotated_fov[2]
-	orientation_list = orientations(x, y, z, time)
-	return orientation_list
-	
-	
 	
 def rotate_ivm_fov(instra_x_hat, instra_y_hat, instra_z_hat):
 	"""rotates the ivm fov by 180 degrees in the x coordinate to provide data for other ivm (only for demo)"""
