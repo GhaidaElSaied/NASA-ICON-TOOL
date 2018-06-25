@@ -1,5 +1,5 @@
 from netCDF4 import Dataset
-import math, import numpy as np, import cal_funcs
+import math, import numpy as np, import calc_funcs
 
 def czml_generator_ivm(filename):
 	""" Writes a czml file with the orientation and posistion data for the cone defined by the field of view of the IVM"""
@@ -14,9 +14,11 @@ def czml_generator_ivm(filename):
 	lat = fovdata.variables["ICON_ANCILLARY_IVM_LATITUDE"]
 	lon = fovdata.variables["ICON_ANCILLARY_IVM_LONGITUDE"]
 	alt = fovdata.variables["ICON_ANCILLARY_IVM_ALTITUDE"]
-
+	ivmb_x, ivmb_y, ivmb_z = rotate_ivm_fov(instra_x_hat, instra_y_hat, instra_z_hat)
+	
 	position_list = calc_funcs.positions(lat,lon,alt,time)
-	orientation_list = calc_funcs.orientations(instra_x_hat,instra_y_hat,instra_z_hat,time)
+	ivma_orientation_list = calc_funcs.orientations(instra_x_hat,instra_y_hat,instra_z_hat,time)
+	ivmb_orientation_list = calc_funcs.orientatins(ivmb_x, ivmb_y, ivmb_z, time)
 
 	label_start = """[{"version": "1.0", "id": "document"}, {"label":
 		{"text": "ICON",
