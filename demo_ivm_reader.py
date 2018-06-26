@@ -11,6 +11,8 @@ def czml_generator_ivm(filename):
 	ivma_x_hat = fovdata.variables["ICON_ANCILLARY_IVM_INSTRA_XHAT_ECEF"][:,]
 	ivma_y_hat = fovdata.variables["ICON_ANCILLARY_IVM_INSTRA_YHAT_ECEF"][:,]
 	ivma_z_hat = fovdata.variables["ICON_ANCILLARY_IVM_INSTRA_ZHAT_ECEF"][:,]
+	#rotate FOV for demo
+	
 
 	ivmb_x_hat, ivmb_y_hat, ivmb_z_hat = calc_funcs.rotate_ivm_fov(ivma_x_hat, ivma_y_hat, ivma_z_hat)
 
@@ -18,6 +20,8 @@ def czml_generator_ivm(filename):
 	lat = fovdata.variables["ICON_ANCILLARY_IVM_LATITUDE"]
 	lon = fovdata.variables["ICON_ANCILLARY_IVM_LONGITUDE"]
 	alt = fovdata.variables["ICON_ANCILLARY_IVM_ALTITUDE"]
+	
+	
 
 	position_list = calc_funcs.positions(lat,lon,alt,time)
 	ivma_orientation_list = calc_funcs.orientations(ivma_x_hat,ivma_y_hat, ivma_z_hat,time)
