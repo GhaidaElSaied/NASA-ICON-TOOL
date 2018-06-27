@@ -20,15 +20,20 @@ def positions(lat, lon, alt, time):
 def orientations(instra_x_hat,instra_y_hat,instra_z_hat,time):
 	"""Generates a unit Quaternion from the xhat,yhat,zhat,and time"""
 	unitQuaternions = []
+	rotation = np.matrix([[0, -1, 0], [1, 0, 0], [0, 0, 1]])
+	quat_rotation = quaternion_from_matrix(rotation).tolist()
 	for i in range(len(instra_x_hat)):
 		x = instra_x_hat[i]
 		y = instra_y_hat[i]
 		z = instra_z_hat[i]
-		rotation_matrix = np.matrix([x,y,z])
-		quaternion = np.roll(quaternion_from_matrix(rotation_matrix),3) 
+		matrix = np.matrix([x, y, z])
+		quaternion_initial = quaternion_from_matrix(matrix).tolist()
+		quat_product = hamilton_product(quat_rotation, quaternion_initial)
+		quaternion = hamilton_product(quat_product, quaternion_conjugate(quat_rotation))
 		time_string = convert_time_format(time[i])
 		unitQuaternions += time_string,(-1*quaternion[0]),(-1*quaternion[1]),(-1*quaternion[2]),quaternion[3]
 	return unitQuaternions
+
 
 def quaternion_from_matrix(matrix, isprecise=False):
     """Return quaternion from rotation matrix.
