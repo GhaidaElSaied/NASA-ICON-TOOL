@@ -294,12 +294,9 @@ def get_fov_mighti(bottom_left, bottom_right, top_left, top_right):
 	return np.array([bottom_left, bottom_right, top_left, top_right])
 
 
-def rotate_ivm_fov(instra_x_hat, instra_y_hat, instra_z_hat):
-	"""rotates the ivm fov by 180 degrees in the x coordinate to provide data for other ivm (only for demo)"""
-	ivmb_x = instra_x_hat[:][:]
-	ivmb_y = instra_y_hat[:][:]
-	for i in range(len(instra_x_hat)):
-		for j in range(3):
-			ivmb_x[i][j] = -1 * ivmb_x[i][j]
-			ivmb_y[i][j]  = -1 * ivmb_y[i][j]
-	return ivmb_x, ivmb_y, instra_z_hat
+
+def rotate_for_ivmb(x_hat, y_hat, z_hat):
+	ivmb_x_hat = []
+	for i in range(len(x_hat)):
+		ivmb_x_hat.append(np.multiply(x_hat[i], -1))
+	return ivmb_x_hat, y_hat, z_hat
