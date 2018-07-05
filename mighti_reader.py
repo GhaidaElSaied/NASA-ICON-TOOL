@@ -10,26 +10,40 @@ def czml_generator_mighti(filename):
 
 
   #read position of spacecraft in longitude, latitude, altitude
-  lat = ["ICON_ANCILLARY_MIGHTI_LATITUDE"]
-  lon = ["ICON_ANCILLARY_MIGHTI_LONGITUDE"]
-  alt = ["ICON_ANCILLARY_MIGHTI_ALTITUDE"]
+  lat = mightidata.variables["ICON_ANCILLARY_MIGHTI_LATITUDE"]
+  lon = mightidata.variables["ICON_ANCILLARY_MIGHTI_LONGITUDE"]
+  alt = mightidata.variables["ICON_ANCILLARY_MIGHTI_ALTITUDE"]
 
+  #read position of spacecraft in ECEF
+  sc_ecef_position = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_POSITION_ECEF"][:, :, 1]
+
+  #read orientation of spacecraft in ECEF
+  x_hat =mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_XHAT"]
+  y_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_YHAT"]
+  z_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_ZHAT"]
   #read orientation of MIGHTI instrument in ECEF
   mighti_FOV = mightidata.variables["ICON_ANCILLARY_MIGHTI_FOV_UNITVECTORS_ECEF"]
-  bottom_left_x, bottom_left_y, bottom_left_z = mighti_FOV[0, 0, :][0], mighti_FOV[0, 0, :][1], mighti_FOV[0, 0, :][2]
-  bottom_right_x, bottom_right_y, bottom_right_z = mighti_FOV[2, 0, :][0], mighti_FOV[2, 0, :][1], mighti_FOV[2, 0, :][2]
-  top_left_x, top_left_y, top_left_z= mighti_FOV[0, 2, :][0], mighti_FOV[0, 2, :][1], mighti_FOV[0, 2, :][2]
-  top_right_x, top_right_y, top_right_z= mighti_FOV[2, 2, :][0], mighti_FOV[2, 2, :][1], mighti_FOV[2, 2, :][2]
+  bottom_left =  mighti_FOV[:,0,0,:,1]
+  bottom_right = mighti_FOV[:,2,0,:,1]
+  top_left_= mighti_FOV[:,0,2,:,1]
+  top_right= mighti_FOV[:,2,2,:,1]
 
   #position of spacecraft
   position_list = calc_funcs.positions(lat, lon, alt, time)
-  #unit vectors in ECEF for bottom left, bottom right, top left, top right to unit quaternions
-  bottom_left = calc_funcs.orientations(bottom_left_x, bottom_left_y, bottom_left_z, time)
-  bottom_right = calc_funcs.orientations(bottom_right_x, bottom_right_y, bottom_right_z, time)
-  top_left = calc_funcs.orientations(top_left_x, top_left_y, top_left_z, time)
-  top_right = calc_funcs.orientations(top_right_x, top_right_y, top_right_z, time)
-  #puts unit quaternions for FOV into array
-  orientation_list = calc_funcs.get_fov_mighti(bottom_left, bottom_right, top_left, top_right)
+   #ECEF postion of spacecraft
+  mighti_ecef_pos = ecef_position_list(sc_ecef_position)
+  #FOV vectors in quaternion
+  bottom_left_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[0]
+  bottom_right_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[1]
+  top_left_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[2]
+  top_right_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[3]
+  #rotate the ECEF positions by the various FOV quaternions and put in unit quaternion form
+  bottom_left_quat_final = unit_quaternion_mighti_fov(bottom_left_quat, position_list)
+  bottom_right_quat_final = unit_quaternion_mighti_fov(bottom_right_quat, position_list)
+  top_left_quat_final = unit_quaternion_mighti_fov(top_left_quat, position_list)
+  top_right_quat_final = unit_quaternion_mighti_fov(top_right_quat, position_list)
+
+
 
 
   start_file = """[{"version": "1.0", "id": "document"},
