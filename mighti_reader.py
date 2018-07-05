@@ -31,17 +31,17 @@ def czml_generator_mighti(filename):
   #position of spacecraft
   position_list = calc_funcs.positions(lat, lon, alt, time)
    #ECEF postion of spacecraft
-  mighti_ecef_pos = ecef_position_list(sc_ecef_position)
+  mighti_ecef_pos = calc_funcs.ecef_position_list(sc_ecef_position)
   #FOV vectors in quaternion
-  bottom_left_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[0]
-  bottom_right_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[1]
-  top_left_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[2]
-  top_right_quat = mighti_orientations(bottom_left, bottom_right, top_left, top_right)[3]
+  bottom_left_quat = calc_funcs.mighti_orientations(bottom_left, bottom_right, top_left, top_right)[0]
+  bottom_right_quat = calc_funcs.mighti_orientations(bottom_left, bottom_right, top_left, top_right)[1]
+  top_left_quat = calc_funcs.mighti_orientations(bottom_left, bottom_right, top_left, top_right)[2]
+  top_right_quat = calc_funcs.mighti_orientations(bottom_left, bottom_right, top_left, top_right)[3]
   #rotate the ECEF positions by the various FOV quaternions and put in unit quaternion form
-  bottom_left_quat_final = unit_quaternion_mighti_fov(bottom_left_quat, position_list)
-  bottom_right_quat_final = unit_quaternion_mighti_fov(bottom_right_quat, position_list)
-  top_left_quat_final = unit_quaternion_mighti_fov(top_left_quat, position_list)
-  top_right_quat_final = unit_quaternion_mighti_fov(top_right_quat, position_list)
+  bottom_left_quat_final = calc_funcs.unit_quaternion_mighti_fov(bottom_left_quat, position_list)
+  bottom_right_quat_final = calc_funcs.unit_quaternion_mighti_fov(bottom_right_quat, position_list)
+  top_left_quat_final = calc_funcs.unit_quaternion_mighti_fov(top_left_quat, position_list)
+  top_right_quat_final = calc_funcs.unit_quaternion_mighti_fov(top_right_quat, position_list)
 
 
 
