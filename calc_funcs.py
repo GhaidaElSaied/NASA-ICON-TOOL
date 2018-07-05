@@ -288,10 +288,7 @@ def orientations_horizontal_coordinate(azimuth, zenith, time):
 	for pair in map(list, zip(azimuth, zenith, time)):
 		orients += [convert_time_format(pair[2])] + orientation_to_unit_quaternion(numpy.mean(pair[0].data), numpy.mean(pair[1].data))
 	return orients
-    
-def get_fov_mighti(bottom_left, bottom_right, top_left, top_right):
-	"""put the vectors for MIGHTI FOV into array"""
-	return np.array([bottom_left, bottom_right, top_left, top_right])
+   
 
 
 
@@ -300,3 +297,26 @@ def rotate_for_ivmb(x_hat, y_hat, z_hat):
 	for i in range(len(x_hat)):
 		ivmb_x_hat.append(np.multiply(x_hat[i], -1))
 	return ivmb_x_hat, y_hat, z_hat
+
+def mighti_orientations(bottom_left, bottom_right, top_left, top_right):
+	master_list = [bottom_left, bottom_right, top_left, top_right]
+	master_quat_list = []
+	for j in range(len(master_list)):
+		quat_list = []
+		for i in range(len(master_list[j])):
+			matrix = np.diag(master_list[j][i].tolist())
+			theta, phi, psi = compute_euler_angles(matrix)
+			quat_list.append((euler_angles_to_quaternion(theta, phi, psi)))
+		master_quat_list.append(quat_list)
+	return master_quat_list
+
+def unit_quaternion_mighti_fov(quaternions, positions):
+	norm_quats = []
+	for i in range(len(positions)):
+		vec = positions[i].tolist()
+		quat = quaternions[i]
+		rotated_vector = quaternion_rotation(quat, vec)
+		rotated_quat = [0] + rotated_vector
+		final_quat = unit_quaternion(rotated_quat)
+		norm_quats.append(final_quat)
+	return norm_quats
