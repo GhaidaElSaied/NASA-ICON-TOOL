@@ -100,12 +100,12 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 			phi = 0 #in this case, phi value can be arbitrary
 			if matrix[0,2] == -1:
 				theta = pi/2
-				psi = arctan(matrix[0,1], matrix[0,2])
+				psi = arctan2(matrix[0,1], matrix[0,2])
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
 				unit_quaternions_list +=time_string, quaternion[0], quaternion[1], quaternion[2], quaternion[3]
 			else:
 				theta = -1 * pi/2
-				psi = arctan((-1* matrix[0,1])/ (-1*matrix[0,2]))
+				psi = arctan2((-1* matrix[0,1])/ (-1*matrix[0,2]))
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
 				unit_quaternions_list +=time_string, quaternion[0], quaternion[1], quaternion[2], quaternion[3]
 		else:
@@ -120,17 +120,13 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 
 
 
-
-
-
-
 def compute_psi(matrix, theta_1, theta_2):
 	psi_1_num = matrix[2,1]/cos(theta_1)
 	psi_1_denom = matrix[2,2]/cos(theta_1)
-	psi_1 = arctan(psi_1_num/psi_1_denom)
+	psi_1 = arctan2(psi_1_num, psi_1_denom)
 	psi_2_num = matrix[2,1]/cos(theta_2)
 	psi_2_denom = matrix[2,2]/cos(theta_2)
-	psi_2 = arctan(psi_2_num/psi_2_denom)
+	psi_2 = arctan2(psi_2_num, psi_2_denom)
 	return psi_1, psi_2
 
 
@@ -138,19 +134,18 @@ def compute_phi(matrix, theta_1, theta_2):
 	"""compute phi for euler matrix"""
 	phi_1_num = matrix[1, 0]/cos(theta_1)
 	phi_1_denom = matrix[0,0]/cos(theta_1)
-	phi_1 = arctan(phi_1_num/phi_1_denom)
+	phi_1 = arctan2(phi_1_num, phi_1_denom)
 	phi_2_num = matrix[1, 0]/cos(theta_2)
 	phi_2_denom = matrix[0,0]/cos(theta_2)
-	phi_2 = arctan(phi_2_num/phi_2_denom)
+	phi_2 = arctan2(phi_2_num, phi_2_denom)
 	return phi_1, phi_2
 
 def euler_angles_to_quaternion(theta, phi, psi):
-	q_0 = cos2(phi) * cos2(theta) * cos2(psi) + sin2(phi) * sin2(theta) * sin2(psi)
-	q_1 = sin2(phi) * cos2(theta) * cos2(psi) - cos2(phi) * sin2(theta) * sin2(psi)
-	q_2 = cos2(phi) * sin2(theta) * cos2(psi) + sin2(phi) * cos2(theta) * sin2(psi)
-	q_3 = cos2(phi) * cos2(theta) * sin2(psi) - sin2(phi) * sin2(theta) * cos2(psi)
+	q_0 = cos2(phi) * cos2(theta) * cos2(psi) + -1* sin2(phi) * sin2(theta) * sin2(psi)
+	q_1 = sin2(theta) * cos2(phi) * cos2(psi) + sin2(phi) * cos2(theta) * sin2(psi)
+	q_2 = -1 * cos2(phi) * sin2(theta) * sin2(psi) + sin2(phi) * cos2(theta) * cos2(psi)
+	q_3 = sin2(phi) * cos2(psi) * sin2(theta) + sin2(psi) * cos2(theta) * cos2(phi)
 	return [q_0, q_1, q_2, q_3]
-
 
 def sin2(angle):
 	"""returns sin of angle divided by two"""
