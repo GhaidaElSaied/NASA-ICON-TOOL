@@ -1,4 +1,6 @@
 import math, import numpy as np 
+from math import sqrt
+from math import cos, sin, pi, atan2 as arctan2, asin as arcsin
 
 def convert_time_format(time):
 	"""Converts time stamps from the netCDF to the form for czml "2018-02-09T00:00:00+00:00"""
