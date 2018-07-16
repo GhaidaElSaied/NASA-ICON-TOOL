@@ -317,3 +317,18 @@ def unit_quaternion_mighti_fov(quaternions, positions):
 		final_quat = unit_quaternion(rotated_quat)
 		norm_quats.append(final_quat)
 	return norm_quats
+
+def final_mighti_quat(quat_list, x_hat, y_hat, z_hat, time):
+	final_quaternion_list = []
+	for i in range(len(x_hat)):
+		time_string = convert_time_format(time[i])
+		matrix = np.matrix([x_hat[i].tolist(), y_hat[i].tolist(), z_hat[i].tolist()])
+		theta, phi, psi = compute_euler_angles(matrix)
+		quaternion = euler_angles_to_quaternion(theta, phi, psi)
+		quat_matrix = np.matrix([quat_list[0][i], quat_list[1][i], quat_list[2][i], quat_list[3][i]])
+		quat_product = np.matmul(quat_matrix, quaternion).tolist()
+		final_quat = []
+		for j in range(4):
+			final_quat.append(quat_product[0][j])
+		final_quaternion_list.append(final_quat + [time_string])
+	return final_quaternion_list
