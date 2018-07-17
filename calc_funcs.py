@@ -328,8 +328,5 @@ def final_mighti_quat(quat_list, x_hat, y_hat, z_hat, time):
 		quaternion = euler_angles_to_quaternion(theta, phi, psi)
 		quat_matrix = np.matrix([quat_list[0][i], quat_list[1][i], quat_list[2][i], quat_list[3][i]])
 		quat_product = np.matmul(quat_matrix, quaternion).tolist()
-		final_quat = []
-		for j in range(4):
-			final_quat.append(quat_product[0][j])
-		final_quaternion_list.append(final_quat + [time_string])
+		final_quaternion_list += quat_product[0][0], quat_product[0][1], quat_product[0][2], quat_product[0][3], time_string
 	return final_quaternion_list
