@@ -4,13 +4,10 @@ from math import cos, sin, pi, atan2 as arctan2, asin as arcsin
 
 def convert_time_format(time):
 	"""Converts time stamps from the netCDF to the form for czml "2018-02-09T00:00:00+00:00"""
-	time_string = time[0:10] + "T" + time[11:19] +"+00:00"
+	time_string = time[0:10] + "T" + time[11:19] +"Z"
 	return ('"%s"' % time_string)
 
-def convert_time_format(time):
-	"""Converts time stamps from the netCDF to the form for czml "2018-02-09T00:00:00+00:00"""
-	time_string = time[0:10] + "T" + time[11:19] +"+00:00"
-	return ('"%s"' % time_string) 
+
 
 def positions(lat, lon, alt, time):
 	"""Outputs a list with the positions of the satellite by time when given the lat, lon, alt, time variables from a netcdf file. """
@@ -20,7 +17,7 @@ def positions(lat, lon, alt, time):
 	alt = alt[:].tolist()
 	time = time[:].tolist() 
 	for i in range(len(lat)):
-		positions += [convert_time_format(time[i]), lon[i], lat[i], (alt[i] * 1000)]
+		positions += convert_time_format(time[i]), lon[i], lat[i], (alt[i] * 1000)
 	return positions
 
 def orientations(instra_x_hat,instra_y_hat,instra_z_hat,time):
