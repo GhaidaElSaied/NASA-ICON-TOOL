@@ -57,7 +57,7 @@ def czml_generator_mighti(filename):
 		"model" : {
 			"gltf": "MIGHTI_FOV.gltf",
             "color" : "black",
-
+            "silhouetteColor": "black",
             }
 		},
 		"position": {
@@ -72,7 +72,7 @@ def czml_generator_mighti(filename):
 			"unitQuaternion":"""
   end_file = '}}]'
   file_complete = start_file + str(position_list).replace("'", '') + middle_file + str(orientation_FOV).replace("'",'')+ end_file
-  f = open("mighti_test" + '.txt', "w+")
+  f = open(filename[:-3] + '.txt', "w+")
   f.write(file_complete)
   f.close();
 
