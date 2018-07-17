@@ -15,6 +15,10 @@ def convert_time_format(time):
 def positions(lat, lon, alt, time):
 	"""Outputs a list with the positions of the satellite by time when given the lat, lon, alt, time variables from a netcdf file. """
 	positions = []
+	lat = lat[:].tolist()
+	lon = lon[:].tolist()
+	alt = alt[:].tolist()
+	time = time[:].tolist() 
 	for i in range(len(lat)):
 		positions += [convert_time_format(time[i]), lon[i], lat[i], (alt[i] * 1000)]
 	return positions
@@ -93,9 +97,9 @@ def quaternion_from_matrix(matrix, isprecise=False):
 def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 	unit_quaternions_list = []
 	for i in range(len(x_hat)):
-		x = x_hat[i]
-		y = y_hat[i]
-		z = z_hat[i]
+		x = x_hat[i].tolist()
+		y = y_hat[i].tolist()
+		z = z_hat[i].tolist()
 		matrix = np.matrix([x,y,z])
 		time_string = convert_time_format(time[i])
 		if abs(matrix[0,2]) == 1:
