@@ -11,15 +11,13 @@ def czml_generator_ivm(filename):
 	ivma_x_hat = fovdata.variables["ICON_ANCILLARY_IVM_INSTRA_XHAT_ECEF"][:, ]
 	ivma_y_hat = fovdata.variables["ICON_ANCILLARY_IVM_INSTRA_YHAT_ECEF"][:, ]
 	ivma_z_hat = fovdata.variables["ICON_ANCILLARY_IVM_INSTRA_ZHAT_ECEF"][:, ]
-	#convert ivma  fov unit vectors to ivmb fov unit vectors
+	#convert ivma fov unit vectors to ivmb fov unit vectors
 	ivmb_x_hat, ivmb_y_hat, ivmb_z_hat = calc_funcs.rotate_for_ivmb(ivma_x_hat, ivma_y_hat, ivma_z_hat)
-
 
 	time = fovdata.variables["ICON_ANCILLARY_IVM_TIME_UTC"]
 	lat = fovdata.variables["ICON_ANCILLARY_IVM_LATITUDE"]
 	lon = fovdata.variables["ICON_ANCILLARY_IVM_LONGITUDE"]
 	alt = fovdata.variables["ICON_ANCILLARY_IVM_ALTITUDE"]
-
 
 	position_list = calc_funcs.positions(lat,lon,alt,time)
 	ivma_orientations = calc_funcs.FOV_ivm_orientations(ivma_x_hat, ivma_z_hat, ivma_z_hat, time)
@@ -58,45 +56,30 @@ def czml_generator_ivm(filename):
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
 		"id" : "ivma",
-		"name" : "IVM-""" + type + """FOV\"
-		"cylinder" : {
-			"length" : 1000000.0,
-			"topRadius" : 0.0,
-			"bottomRadius" : 500000.0,
-			"material" : {
-				"solidColor" : {
-					"color" : {
-						"rgba" : [0, 255, 0, 128]
-					}
-				}
-			},
-			"outline" : true,
-			"outlineColor" : {
-				"rgba" : [0, 0, 0, 255]
+		"name" : "IVM-""" + type + """FOV\",
+		"model" : {
+			"gltf" : "cone.glb",
+			"silhouetteColor" : {
+			"rgba" : [0, 0, 0, 255]
+			}
+			"color" {
+			 "rgba" : [0, 255, 0, 128]
 			}
 		},
 		"position": {
 			"cartographicDegrees":"""
 	ivmb_file = """[{"version": "1.0", "id": "document"},
-		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
-		"id" : "ivma",
-		"name" : "IVM-""" + "B" + """FOV\"
-		"cylinder" : {
-			"length" : 1000000.0,
-			"topRadius" : 0.0,
-			"bottomRadius" : 500000.0,
-			"material" : {
-				"solidColor" : {
-					"color" : {
-						"rgba" : [0, 255, 0, 128]
-					}
-				}
-			},
-			"outline" : true,
-			"outlineColor" : {
-				"rgba" : [0, 0, 0, 255]
-			}
+		"name" : "IVM-""" + "B" + """FOV\",
+		"model" : {
+		"gltf" : "cone.glb",
+		"silhouetteColor" : {
+		"rgba" : [0, 0, 0, 255]
+		}
+		"color" {
+		 "rgba" : [0, 255, 0, 128]
+		}
+	},
 		},
 		"position": {
 			"cartographicDegrees":"""
@@ -120,12 +103,12 @@ def czml_generator_ivm(filename):
 	path_file = path_start + position_str + end_file
 
 	f_a = open(filename[:-3] + '.txt', "w+")
-	f_b = open(filename[:-3] + '.txt', "w+")
+	f_b = open(filename[:-3] + 'B' + '.txt', "w+")
 	label_f = open("label.txt", "w+")
 	path_f = open("path.txt", "w+")
 
-	f_a.write(ivma_file);
-	f_b.write(ivmb_file)
+	f_a.write(ivma_file_complete);
+	f_b.write(ivmb_file_complete)
 	label_f.write(label_file)
 	path_f.write(path_file)
 
@@ -136,3 +119,5 @@ def czml_generator_ivm(filename):
 
 	return "files written for " + filename[:-2]
 czml_generator_ivm("ICON_L0P_IVM-A_Ancillary_2017-05-27_v01r001.NC")
+czml_generator_ivm("ICON_L0P_IVM-A_Ancillary_2017-05-28_v01r001.NC")
+czml_generator_ivm("ICON_L0P_IVM-A_Ancillary_2017-05-29_v01r001.NC")
