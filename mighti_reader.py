@@ -18,7 +18,7 @@ def czml_generator_mighti(filename):
   sc_ecef_position = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_POSITION_ECEF"][:, :, 1]
 
   #read orientation of spacecraft in ECEF
-  x_hat =mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_XHAT"][:][1]
+  x_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_XHAT"][:][1]
   y_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_YHAT"][:][1]
   z_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_ZHAT"][:][1]
   #read orientation of MIGHTI instrument in ECEF
@@ -55,7 +55,7 @@ def czml_generator_mighti(filename):
 		"id" : "mighti",
 		"name" : "MIGHTI-""" + type + """FOV\"
 		"model" : {
-			"gltf": "MIGHTI_FOV.gltf",
+			"gltf": "MIGHTI_FOV.glb",
             "color" : "black",
             "silhouetteColor": "black",
             }
@@ -71,6 +71,7 @@ def czml_generator_mighti(filename):
 			"interpolationDegree":1,
 			"unitQuaternion":"""
   end_file = '}}]'
+  
   file_complete = start_file + str(position_list).replace("'", '') + middle_file + str(orientation_FOV).replace("'",'')+ end_file
   f = open(filename[:-3] + '.txt', "w+")
   f.write(file_complete)
