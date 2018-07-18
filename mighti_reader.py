@@ -18,9 +18,9 @@ def czml_generator_mighti(filename):
   sc_ecef_position = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_POSITION_ECEF"][:, :, 1]
 
   #read orientation of spacecraft in ECEF
-  x_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_XHAT"][:][1]
-  y_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_YHAT"][:][1]
-  z_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_ZHAT"][:][1]
+  x_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_XHAT"][:, 1]
+  y_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_YHAT"][:, 1]
+  z_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_ZHAT"][:, 1]
   #read orientation of MIGHTI instrument in ECEF
   mighti_FOV = mightidata.variables["ICON_ANCILLARY_MIGHTI_FOV_UNITVECTORS_ECEF"]
   bottom_left =  mighti_FOV[:,0,0,:,1]
