@@ -20,7 +20,7 @@ def czml_generator_ivm(filename):
 	alt = fovdata.variables["ICON_ANCILLARY_IVM_ALTITUDE"]
 
 	position_list = calc_funcs.positions(lat,lon,alt,time)
-	ivma_orientations = calc_funcs.FOV_ivm_orientations(ivma_x_hat, ivma_z_hat, ivma_z_hat, time)
+	ivma_orientations = calc_funcs.FOV_ivm_orientations(ivma_x_hat, ivma_y_hat, ivma_z_hat, time)
 	ivmb_orientations = calc_funcs.FOV_ivm_orientations(ivmb_x_hat, ivmb_y_hat, ivmb_z_hat, time)
 
 
