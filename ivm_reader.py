@@ -52,34 +52,40 @@ def czml_generator_ivm(filename):
 			},
 				"position": {
 					"cartographicDegrees" :"""
-	ivma_file = """[{"version": "1.0", "id": "document"},
+	ivma_file = [{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
 		"id" : "ivma",
-		"name" : "IVM-""" + type + """FOV\",
+		"name" : "IVM-AFOV",
 		"model" : {
-			"gltf" : "cone.glb",
+			"show" : true,
+			"gltf" : "cone.gltf",
+			"scale" : 50000000.0,
 			"silhouetteColor" : {
-			"rgba" : [0, 0, 0, 255]
-			}
-			"color" {
-			 "rgba" : [0, 255, 0, 128]
+				"rgba" : [0, 0, 0, 255]
+			},
+			"color": {
+			 	"rgba" : [0, 255, 0, 128]
 			}
 		},
 		"position": {
 			"cartographicDegrees":"""
-	ivmb_file = """[{"version": "1.0", "id": "document"},
+	ivmb_file = [{"version": "1.0", "id": "document"},
+		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
-		"name" : "IVM-""" + "B" + """FOV\",
+		"id" : "ivmb",
+		"name" : "IVM-BFOV",
 		"model" : {
-		"gltf" : "cone.glb",
-		"silhouetteColor" : {
-		"rgba" : [0, 0, 0, 255]
-		}
-		"color" {
-		 "rgba" : [0, 255, 0, 128]
-		}
-	},
+			"show" : true,
+			"gltf" : "cone.gltf",
+			"scale" : 50000000.0,
+			"silhouetteColor" : {
+				"rgba" : [0, 0, 0, 255]
+			},
+			"color": {
+			 	"rgba" : [0, 255, 0, 128]
+			}
+		},
 		},
 		"position": {
 			"cartographicDegrees":"""
