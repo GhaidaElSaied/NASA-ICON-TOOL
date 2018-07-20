@@ -58,6 +58,7 @@ def czml_generator_mighti(filename):
 			"gltf": "MIGHTI_FOV.glb",
             "color" : "black",
             "silhouetteColor": "black",
+            "scale" : "50000000"
             }
 		},
 		"position": {
@@ -71,7 +72,7 @@ def czml_generator_mighti(filename):
 			"interpolationDegree":1,
 			"unitQuaternion":"""
   end_file = '}}]'
-  
+
   file_complete = start_file + str(position_list).replace("'", '') + middle_file + str(orientation_FOV).replace("'",'')+ end_file
   f = open(filename[:-3] + '.txt', "w+")
   f.write(file_complete)
@@ -80,4 +81,4 @@ def czml_generator_mighti(filename):
 
   return "file written for" + filename
 
-czml_generator_mighti("ICON_L0P_MIGHTI-A_Ancillary_2017-05-27_v01r000.NC")
+mightidata = Dataset("ICON_L0P_MIGHTI-A_Ancillary_2017-05-27_v01r000.NC", "r")
