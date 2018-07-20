@@ -52,7 +52,7 @@ def czml_generator_ivm(filename):
 			},
 				"position": {
 					"cartographicDegrees" :"""
-	ivma_file = [{"version": "1.0", "id": "document"},
+	ivma_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
 		"id" : "ivma",
@@ -70,7 +70,7 @@ def czml_generator_ivm(filename):
 		},
 		"position": {
 			"cartographicDegrees":"""
-	ivmb_file = [{"version": "1.0", "id": "document"},
+	ivmb_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
 		"id" : "ivmb",
