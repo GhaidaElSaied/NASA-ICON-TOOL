@@ -308,6 +308,14 @@ def mighti_orientations(bottom_left, bottom_right, top_left, top_right):
 		master_quat_list.append(quat_list)
 	return master_quat_list
 
+def ecef_position_list(positions):
+	"""gives ecef position as list"""
+	positions_list = []
+	for i in range(len(positions)):
+		position = positions[i].tolist()
+		positions_list.append(position)
+	return positions
+
 def unit_quaternion_mighti_fov(quaternions, positions):
 	norm_quats = []
 	for i in range(len(positions)):
