@@ -2,7 +2,6 @@
 import math, numpy  as np
 from math import sqrt
 from math import cos, sin, pi, atan2 as arctan2, asin as arcsin
-from pyquaternion import Quaternion
 
 
 def convert_time_format(time):
@@ -78,55 +77,21 @@ def orientations_horizontal_coordinate(azimuth, zenith, time):
 		orients += [convert_time_format(pair[2])] + orientation_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
 	return orients
 
-def orientations(instra_x_hat,instra_y_hat,instra_z_hat,time):
-	"""Generates a unit Quaternion from the xhat,yhat,zhat,and time"""
+def orientations(sc_x_hat, time):
 	unitQuaternions = []
-	for i in range(len(instra_x_hat)):
-		x = instra_x_hat[i]
-		y = instra_y_hat[i]
-		z = instra_z_hat[i]
-		matrix = np.matrix([x, y, z])
-		rotate_matrix = np.matrix([[0, -1, 0], [1, 0, 0], [0, 0, 1]])
-		quat = quaternion_from_matrix(matrix).tolist()
-		rotate = quaternion_from_matrix(rotate_matrix).tolist()
-		quaternion = hamilton_product(rotate, quat)
+	for i in range(len(sc_x_hat)):
 		time_string = convert_time_format(time[i])
-		unitQuaternions += time_string,(-1*quaternion[0]),(-1*quaternion[1]),(-1*quaternion[2]),quaternion[3]
+		x = sc_x_hat[i]
+		quaternion = [0] + x
+		unitQuaternions += time_string,quaternion[0],quaternion[1],quaternion[2],quaternion[3]
 	return unitQuaternions
 
 
 matrix = np.matrix([[2,3], [4,5]])
 
 def gram_schmidt(matrix):
-	orthogonal_vectors = [np.array(matrix[0].tolist()[0])]
-	difference = np.array(matrix[0].tolist()[0])
-	difference = difference.astype(np.float)
-	proj_vectors = [difference]
-	for i in range(1,len(matrix)):
-		vector = np.array(matrix[i].tolist()[0])
-		scalar = np.dot(proj_vectors[i - 1], vector)/ np.dot(vector, vector)
-		new_diff = scalar * vector
-		proj_vectors.append(new_diff)
-		difference += new_diff
-		orthogonal_vectors.append(vector - difference)
-	orthonormal_vectors = []
-	for k in range(len(orthogonal_vectors)):
-		 orthonormal_vectors.append(normalize(orthogonal_vectors[k].tolist()))
-	return np.matrix(orthonormal_vectors)
-
-
-
-
-
-
-def normalize(vector):
-	norm = np.linalg.norm(vector)
-	for j in range(len(vector)):
-		vector[j] = vector[j]/norm
-	return vector
-
-
-
+	Q, R = np.linalg.qr(matrix)
+	return Q
 
 
 def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
@@ -158,7 +123,7 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 			psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 			phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
 			quaternion = euler_angles_to_quaternion(theta_1, phi_1, psi_2)
-			unit_quaternions_list +=time_string, quaternion[0], quaternion[1], quaternion[2], quaternion[3]
+			unit_quaternions_list +=time_string, quaternion[1], quaternion[1], quaternion[2], quaternion[0]
 	return unit_quaternions_list
 
 
@@ -343,13 +308,11 @@ def ecef_position_list(positions):
 		positions_list.append(position)
 	return positions
 
-def rotate_for_ivmb(x_hat, y_hat, z_hat):
+def rotate_for_ivmb(x_hat):
 	ivmb_x_hat = []
-	ivmb_y_hat = []
 	for i in range(len(x_hat)):
-		ivmb_x_hat.append(np.multiply(x_hat[i], -1))
-		ivmb_y_hat.append(np.multiply(y_hat[i], -1))
-	return ivmb_x_hat, y_hat, z_hat
+		ivmb_x_hat.append(np.multiply(x_hat[i], -1).tolist())
+	return ivmb_x_hat
 
 def mighti_orientations(bottom_left, bottom_right, top_left, top_right):
 	master_list = [bottom_left, bottom_right, top_left, top_right]
