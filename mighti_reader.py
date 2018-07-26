@@ -10,9 +10,10 @@ def czml_generator_mighti(filename):
 
 
   #read position of spacecraft in longitude, latitude, altitude
-  lat = mightidata.variables["ICON_ANCILLARY_MIGHTI_LATITUDE"]
-  lon = mightidata.variables["ICON_ANCILLARY_MIGHTI_LONGITUDE"]
-  alt = mightidata.variables["ICON_ANCILLARY_MIGHTI_ALTITUDE"]
+  lat = mightidata.variables["ICON_ANCILLARY_MIGHTI_LATITUDE"][:, 1]
+  lon = mightidata.variables["ICON_ANCILLARY_MIGHTI_LONGITUDE"][:, 1]
+  alt = mightidata.variables["ICON_ANCILLARY_MIGHTI_ALTITUDE"][:, 1]
+  time = mightidata.variables["ICON_ANCILLARY_MIGHTI_TIME_UTC_STRING"][:, 1]
 
   #read position of spacecraft in ECEF
   sc_ecef_position = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_POSITION_ECEF"][:, :, 1]
@@ -48,17 +49,16 @@ def czml_generator_mighti(filename):
   orientation_FOV = quaternion_final = calc_funcs.final_mighti_quat(quaternion_list, x_hat, y_hat, z_hat, time)
 
 
-
   start_file = """[{"version": "1.0", "id": "document"},
 		{"interpolationDegree": 5,
 		"referenceFrame": "INERTIAL",
 		"id" : "mighti",
 		"name" : "MIGHTI-""" + type + """FOV\"
 		"model" : {
-			"gltf": "MIGHTI_FOV.glb",
+			"gltf": "Models/mighti.gltf",
             "color" : "black",
             "silhouetteColor": "black",
-            "scale" : "50000000"
+            "scale" : "50000000",
             }
 		},
 		"position": {
@@ -81,4 +81,4 @@ def czml_generator_mighti(filename):
 
   return "file written for" + filename
 
-mightidata = Dataset("ICON_L0P_MIGHTI-A_Ancillary_2017-05-27_v01r000.NC", "r")
+mightidata = Dataset("ICON_L0P_MIGHTI-A_Ancillary_2017-05-27_v01r001.NC", "r")
