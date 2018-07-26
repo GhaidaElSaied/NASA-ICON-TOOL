@@ -13,7 +13,7 @@ def czml_generator_ivm(filename):
 	ivma_z_hat = fovdata.variables["ICON_ANCILLARY_IVM_INSTRA_ZHAT_ECEF"][:, ]
 	#convert ivma fov unit vectors to ivmb fov unit vectors
 	sc_x_hat = fovdata.variables["ICON_ANCILLARY_IVM_SC_XHAT_ECEF"][:].tolist()
-	ivmb_x_hat = calc_funcs.rotate_for_ivmb(sc_x_hat)
+	ivmb_x_hat, ivmb_y_hat = calc_funcs.rotate_for_ivmb(ivma_x_hat, ivma_y_hat)
 
 	time = fovdata.variables["ICON_ANCILLARY_IVM_TIME_UTC"]
 	lat = fovdata.variables["ICON_ANCILLARY_IVM_LATITUDE"]

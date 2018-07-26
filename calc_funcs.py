@@ -77,15 +77,6 @@ def orientations_horizontal_coordinate(azimuth, zenith, time):
 		orients += [convert_time_format(pair[2])] + orientation_to_unit_quaternion(np.mean(pair[0].data), np.mean(pair[1].data))
 	return orients
 
-def orientations(sc_x_hat, time):
-	unitQuaternions = []
-	for i in range(len(sc_x_hat)):
-		time_string = convert_time_format(time[i])
-		x = sc_x_hat[i]
-		quaternion = [0] + x
-		unitQuaternions += time_string,quaternion[0],quaternion[1],quaternion[2],quaternion[3]
-	return unitQuaternions
-
 
 matrix = np.matrix([[2,3], [4,5]])
 
@@ -308,11 +299,13 @@ def ecef_position_list(positions):
 		positions_list.append(position)
 	return positions
 
-def rotate_for_ivmb(x_hat):
+def rotate_for_ivmb(x_hat, y_hat):
 	ivmb_x_hat = []
+	ivmb_y_hat = []
 	for i in range(len(x_hat)):
-		ivmb_x_hat.append(np.multiply(x_hat[i], -1).tolist())
-	return ivmb_x_hat
+		ivmb_x_hat += (np.multiply(x_hat[i], -1).tolist())
+		ivmb_y_hat += (np.multiply(x_hat[i], -1).tolist())
+	return ivmb_x_hat, ivmb_y_hat
 
 def mighti_orientations(bottom_left, bottom_right, top_left, top_right):
 	master_list = [bottom_left, bottom_right, top_left, top_right]
