@@ -102,19 +102,19 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 				theta = pi/2
 				psi = arctan2(matrix[0,1], matrix[0,2])
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
-				unit_quaternions_list +=time_string, quaternion[1], quaternion[2], quaternion[3], quaternion[0]
+				unit_quaternions_list +=time_string, quaternion[1],  quaternion[2],  quaternion[3], quaternion[0]
 			else:
 				theta = -1 * pi/2
 				psi = arctan2((-1* matrix[0,1])/ (-1*matrix[0,2]))
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
-				unit_quaternions_list +=time_string, quaternion[1], quaternion[2], quaternion[3], quaternion[0]
+				unit_quaternions_list +=time_string,  quaternion[1],  quaternion[2],  quaternion[3], quaternion[0]
 		else:
 			theta_1 = -1 * arcsin(matrix[0,2])
 			theta_2 = pi - theta_1
 			psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 			phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
 			quaternion = euler_angles_to_quaternion(theta_1, phi_1, psi_2)
-			unit_quaternions_list +=time_string, quaternion[1], quaternion[2], quaternion[3], quaternion[0]
+			unit_quaternions_list +=time_string,  quaternion[1],  quaternion[2],  quaternion[3], quaternion[0]
 	return unit_quaternions_list
 
 
@@ -163,7 +163,7 @@ def euler_angles_to_quaternion(theta, phi, psi):
 	q_1 = sin2(theta) * cos2(phi) * cos2(psi) + sin2(phi) * cos2(theta) * sin2(psi)
 	q_2 = -1 * cos2(phi) * sin2(theta) * sin2(psi) + sin2(phi) * cos2(theta) * cos2(psi)
 	q_3 = sin2(phi) * cos2(psi) * sin2(theta) + sin2(psi) * cos2(theta) * cos2(phi)
-	return [q_0, q_1, q_2, q_3]
+	return [q_0, -1* q_1, -1 * q_2, -1 * q_3]
 
 
 def sin2(angle):
@@ -339,5 +339,5 @@ def final_mighti_quat(quat_list, x_hat, y_hat, z_hat, time):
 		quaternion = euler_angles_to_quaternion(theta, phi, psi)
 		quat_matrix = np.matrix([quat_list[0][i], quat_list[1][i], quat_list[2][i], quat_list[3][i]])
 		quat_product = np.matmul(quat_matrix, quaternion).tolist()
-		final_quaternion_list += quat_product[0][0], quat_product[0][1], quat_product[0][2], quat_product[0][3], time_string
+		final_quaternion_list += quat_product[0][1], quat_product[0][2], quat_product[0][3], quat_product[0][0], time_string
 	return final_quaternion_list
