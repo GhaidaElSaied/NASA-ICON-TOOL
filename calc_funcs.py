@@ -280,9 +280,9 @@ def quaternion_rotation_time(quaternion, vector, time):
 
 def orientation_to_unit_quaternion(azimuth, zenith):
 	"""Converts horizontal coordinate data to unit quaternion by determining Euler angles"""
-	euler_angles = orientation_to_euler_angle(azimuth, zenith)
+	euler_angles = horizontal_orientation_to_euler_angle(azimuth, zenith)
 	quat = euler_rotation_to_quaternion(euler_angles)
-	return quat
+	return -1 * quat[1], -1 * quat[2], -1 * quat[3], quat[0]
 
 def horizontal_orientation_to_euler_angle(azimuth, zenith):
     """Takes horizontal coordinate data and returns and euler angle matrix"""
@@ -303,8 +303,8 @@ def rotate_for_ivmb(x_hat, y_hat):
 	ivmb_x_hat = []
 	ivmb_y_hat = []
 	for i in range(len(x_hat)):
-		ivmb_x_hat += (np.multiply(x_hat[i], -1).tolist())
-		ivmb_y_hat += (np.multiply(y_hat[i], -1).tolist())
+		ivmb_x_hat.append((np.multiply(x_hat[i], -1)))
+		ivmb_y_hat.append((np.multiply(y_hat[i], -1)))
 	return ivmb_x_hat, ivmb_y_hat
 
 def mighti_orientations(bottom_left, bottom_right, top_left, top_right):
