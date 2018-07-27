@@ -304,7 +304,7 @@ def rotate_for_ivmb(x_hat, y_hat):
 	ivmb_y_hat = []
 	for i in range(len(x_hat)):
 		ivmb_x_hat += (np.multiply(x_hat[i], -1).tolist())
-		ivmb_y_hat += (np.multiply(x_hat[i], -1).tolist())
+		ivmb_y_hat += (np.multiply(y_hat[i], -1).tolist())
 	return ivmb_x_hat, ivmb_y_hat
 
 def mighti_orientations(bottom_left, bottom_right, top_left, top_right):
