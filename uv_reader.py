@@ -35,20 +35,15 @@ def czml_generator_uv(filename):
 		"id" : """ + "\"" + type + "\"" + """,
 		"name" : """ + "\"" + type + """ FOV",
 		"availability" : """ + time_str + """,
-		"cylinder" : {
-			"length" : 1000000.0,
-    		"topRadius" : 0.0,
-    		"bottomRadius" : 500000.0,
-    		"material" : {
-        		"solidColor" : {
-            		"color" : {
-                		"rgba" : """ + color + """
-            		}
-        		}
-    		},
-			"outline" : true,
-			"outlineColor" : {
-				"rgba" : [0, 0, 0, 255]
+		"model" : {
+			"show" : true,
+			"gltf" : "EUV_FOV.gltf",
+			"scale" : 150000000.0,
+			"silhouetteColor" : {
+				"rgba" : [255, 0, 0, 0]
+			},
+			"color": {
+			 	"rgba" : [255, 0, 0, 128]
 			}
 		},
 		"position" : {
@@ -64,6 +59,11 @@ def czml_generator_uv(filename):
 	f.write(file_complete)
 	f.close();
 	return "file written for " + filename[:-3]
+
+
+
+uvdata = Dataset("ICON_L0P_EUV_Ancillary_2017-05-27_v01r001.NC", "r")
+
 
 # orientations should be recalculated based on where the UV is looking
 def orientations(azimuth, zenith, time):
@@ -89,8 +89,3 @@ def time_string(start_time, end_time):
 	start_time_string = start_time[0:10] + "T" + start_time[11:19] + "Z"
 	end_time_string = end_time[0:10] + "T" + end_time[11:19] + "Z"
 	return ('"%s/%s"' % (start_time_string, end_time_string))
-
-def convert_time_format(time):
-	"""Converts time stamps from the netCDF to the form for czml "2018-02-09T00:00:00+00:00"""
-	time_string = time[0:10] + "T" + time[11:19] + "Z"
-	return ('"%s"' % time_string)
