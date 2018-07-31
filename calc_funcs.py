@@ -163,7 +163,7 @@ def euler_angles_to_quaternion(theta, phi, psi):
 	q_1 = sin2(theta) * cos2(phi) * cos2(psi) + sin2(phi) * cos2(theta) * sin2(psi)
 	q_2 = -1 * cos2(phi) * sin2(theta) * sin2(psi) + sin2(phi) * cos2(theta) * cos2(psi)
 	q_3 = sin2(phi) * cos2(psi) * sin2(theta) + sin2(psi) * cos2(theta) * cos2(phi)
-	return [q_0, -1* q_1, -1 * q_2, -1 * q_3]
+	return [ -1* q_1, -1 * q_2, -1 * q_3, q_0]
 
 
 def sin2(angle):
