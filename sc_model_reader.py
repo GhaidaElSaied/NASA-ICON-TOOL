@@ -45,3 +45,4 @@ def czml_generator_sc(filename):
     f_sc.open('sc' + '_' + filename[25:-3] + '.txt', "w+")
     f_sc.write(sc_file_complete)
     f_sc.close()
+    
