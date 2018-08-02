@@ -4,7 +4,11 @@ from astropy import units as u
 from astropy.coordinates import GCRS, ITRS, EarthLocation, CartesianRepresentation
 from astropy.time import Time
 import os
+"""
+Inputting Dan Cosgroves expected orbit projection file
+Outputting correctly formatted czml files for each day
 
+"""
 
 def eci2lla(x, y, z, yyyy, mm, dd, h, m, s):
     """
