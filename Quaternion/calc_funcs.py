@@ -96,7 +96,7 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 		#if check_orthogonality(matrix):
 			#if .99 <= np.linalg.det(matrix) <=1:
 				#quaternion = proper_rotation_matrix_quaternion(matrix)
-		if abs(matrix[0,2]) == 1:
+		if .99 <= abs(matrix[0,2]) <= 1:
 			phi = 0 #in this case, phi value can be arbitrary
 			if  np.sign(matrix[0,2]) == -1:
 				theta = pi/2
@@ -107,14 +107,14 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 				theta = -1 * pi/2
 				psi = arctan2((-1* matrix[0,1])/ (-1*matrix[0,2]))
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
-				unit_quaternions_list +=time_string,  -1 *quaternion[1],  -1 *quaternion[2],  -1* quaternion[3], quaternion[0]
+				unit_quaternions_list +=time_string,  -1 * quaternion[1],  -1 * quaternion[2],  -1 * quaternion[3], quaternion[0]
 		else:
 			theta_1 = -1 * arcsin(matrix[0,2])
 			theta_2 = pi - theta_1
 			psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 			phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
 			quaternion = euler_angles_to_quaternion(theta_1, phi_1, psi_2)
-			unit_quaternions_list +=time_string,  -1*quaternion[1],  -1*quaternion[2],  -1 *quaternion[3], quaternion[0]
+			unit_quaternions_list +=time_string,  -1* quaternion[1],  -1* quaternion[2],  -1 *quaternion[3], quaternion[0]
 	return unit_quaternions_list
 
 
