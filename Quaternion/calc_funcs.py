@@ -293,7 +293,7 @@ def orientation_to_unit_quaternion(azimuth, zenith):
 	"""Converts horizontal coordinate data to unit quaternion by determining Euler angles"""
 	euler_angles = horizontal_orientation_to_euler_angle(azimuth, zenith)
 	quat = euler_rotation_to_quaternion(euler_angles)
-	return -1 * quat[1], -1 * quat[2], -1 * quat[3], quat[0]
+	return quat[0], quat[1], quat[2], quat[3]
 
 def horizontal_orientation_to_euler_angle(azimuth, zenith):
     """Takes horizontal coordinate data and returns and euler angle matrix"""
