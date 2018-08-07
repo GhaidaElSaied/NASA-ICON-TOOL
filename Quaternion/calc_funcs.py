@@ -100,12 +100,12 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 			phi = 0 #in this case, phi value can be arbitrary
 			if  np.sign(matrix[2,0]) == -1:
 				theta = pi/2
-				psi = arctan2(matrix[1,0], matrix[2,0])
+				psi = arctan2(matrix[0,1], matrix[0,2])
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
 				unit_quaternions_list +=time_string, -1* quaternion[1],  -1 *quaternion[2],  -1 *quaternion[3], quaternion[0]
 			else:
 				theta = -1 * pi/2
-				psi = arctan2((-1* matrix[1,0])/(-1*matrix[2,0]))
+				psi = arctan2((-1* matrix[0,1])/(-1*matrix[0,2]))
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
 				unit_quaternions_list +=time_string,  -1 * quaternion[1],  -1 * quaternion[2],  -1 * quaternion[3], quaternion[0]
 		else:
@@ -120,9 +120,9 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 
 
 def compute_euler_angles(matrix):
-	if abs(matrix[0,2]) == 1:
+	if abs(matrix[2,0]) == 1:
 		phi = 0 #in this case, phi value can be arbitrary
-		if matrix[0,2] == -1:
+		if matrix[2,0] == -1:
 			theta = pi/2
 			psi = arctan2(matrix[0,1], matrix[0,2])
 			return theta, phi, psi
