@@ -96,20 +96,20 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 		#if check_orthogonality(matrix):
 			#if .99 <= np.linalg.det(matrix) <=1:
 				#quaternion = proper_rotation_matrix_quaternion(matrix)
-		if .99 <= abs(matrix[0,2]) <= 1:
+		if .99 <= abs(matrix[2,0]) <= 1:
 			phi = 0 #in this case, phi value can be arbitrary
-			if  np.sign(matrix[0,2]) == -1:
+			if  np.sign(matrix[2,0]) == -1:
 				theta = pi/2
-				psi = arctan2(matrix[0,1], matrix[0,2])
+				psi = arctan2(matrix[1,0], matrix[2,0])
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
 				unit_quaternions_list +=time_string, -1* quaternion[1],  -1 *quaternion[2],  -1 *quaternion[3], quaternion[0]
 			else:
 				theta = -1 * pi/2
-				psi = arctan2((-1* matrix[0,1])/ (-1*matrix[0,2]))
+				psi = arctan2((-1* matrix[1,0])/(-1*matrix[2,0]))
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
 				unit_quaternions_list +=time_string,  -1 * quaternion[1],  -1 * quaternion[2],  -1 * quaternion[3], quaternion[0]
 		else:
-			theta_1 = -1 * arcsin(matrix[0,2])
+			theta_1 = -1 * arcsin(matrix[2,0])
 			theta_2 = pi - theta_1
 			psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 			phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
@@ -293,7 +293,7 @@ def orientation_to_unit_quaternion(azimuth, zenith):
 	"""Converts horizontal coordinate data to unit quaternion by determining Euler angles"""
 	euler_angles = horizontal_orientation_to_euler_angle(azimuth, zenith)
 	quat = euler_rotation_to_quaternion(euler_angles)
-	return quat[0], quat[1], quat[2], quat[3]
+	return -1 * quat[1], -1 * quat[2], -1 * quat[3], quat[0]
 
 def horizontal_orientation_to_euler_angle(azimuth, zenith):
     """Takes horizontal coordinate data and returns and euler angle matrix"""
