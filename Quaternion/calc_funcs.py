@@ -131,7 +131,7 @@ def compute_euler_angles(matrix):
 			psi = arctan2((-1* matrix[0,1]), (-1*matrix[0,2]))
 			return theta, phi, psi
 	else:
-		theta_1 = -1 * arcsin(matrix[0,2])
+		theta_1 = -1 * arcsin(matrix[2,0])
 		theta_2 = pi - theta_1
 		psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 		phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
@@ -159,10 +159,10 @@ def compute_phi(matrix, theta_1, theta_2):
 	return phi_1, phi_2
 
 def euler_angles_to_quaternion(theta, phi, psi):
-	q_0 = cos2(phi) * cos2(theta) * cos2(psi) + -1* sin2(phi) * sin2(theta) * sin2(psi)
-	q_1 = sin2(theta) * cos2(phi) * cos2(psi) + sin2(phi) * cos2(theta) * sin2(psi)
-	q_2 = -1 * cos2(phi) * sin2(theta) * sin2(psi) + sin2(phi) * cos2(theta) * cos2(psi)
-	q_3 = sin2(phi) * cos2(psi) * sin2(theta) + sin2(psi) * cos2(theta) * cos2(phi)
+	q_0 = cos2(phi) * cos2(theta) * cos2(psi) + sin2(phi) * sin2(theta) * sin2(psi)
+	q_1 = sin2(psi) * cos2(theta) * cos2(phi) - cos2(psi) * sin2(theta) * sin2(phi)
+	q_2 = cos2(psi) * sin2(theta) * cos2(phi) + sin2(psi) * cos2(theta) * sin2(phi)
+	q_3 = cos2(psi) * cos2(theta) * sin2(phi) - sin2(psi) * sin2(theta) * cos2(phi)
 	return [ -1* q_1, -1 * q_2, -1 * q_3, q_0]
 
 
