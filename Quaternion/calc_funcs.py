@@ -105,7 +105,7 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 				unit_quaternions_list +=time_string, -1* quaternion[1],  -1 *quaternion[2],  -1 *quaternion[3], quaternion[0]
 			else:
 				theta = -1 * pi/2
-				psi = arctan2((-1* matrix[0,1])/(-1*matrix[0,2]))
+				psi = arctan2((-1* matrix[0,1]), (-1*matrix[0,2]))
 				quaternion = euler_angles_to_quaternion(theta, phi, psi)
 				unit_quaternions_list +=time_string,  -1 * quaternion[1],  -1 * quaternion[2],  -1 * quaternion[3], quaternion[0]
 		else:
@@ -113,14 +113,14 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 			theta_2 = pi - theta_1
 			psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 			phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
-			quaternion = euler_angles_to_quaternion(theta_1, phi_1, psi_2)
+			quaternion = euler_angles_to_quaternion(theta_1, phi_1, psi_1)
 			unit_quaternions_list +=time_string,  -1* quaternion[1],  -1* quaternion[2],  -1 *quaternion[3], quaternion[0]
 	return unit_quaternions_list
 
 
 
 def compute_euler_angles(matrix):
-	if abs(matrix[2,0]) == 1:
+	if .99 <= abs(matrix[2,0]) <= 1:
 		phi = 0 #in this case, phi value can be arbitrary
 		if matrix[2,0] == -1:
 			theta = pi/2
@@ -128,7 +128,7 @@ def compute_euler_angles(matrix):
 			return theta, phi, psi
 		else:
 			theta = -1 * pi/2
-			psi = arctan2((-1* matrix[0,1])/ (-1*matrix[0,2]))
+			psi = arctan2((-1* matrix[0,1]), (-1*matrix[0,2]))
 			return theta, phi, psi
 	else:
 		theta_1 = -1 * arcsin(matrix[0,2])
@@ -324,7 +324,7 @@ def mighti_orientations(bottom_left, bottom_right, top_left, top_right):
 	for j in range(len(master_list)):
 		quat_list = []
 		for i in range(len(master_list[j])):
-			matrix = np.diag(master_list[j][i].tolist())
+			matrix = np.diag(master_list[j][i])
 			theta, phi, psi = compute_euler_angles(matrix)
 			quat_list.append((euler_angles_to_quaternion(theta, phi, psi)))
 		master_quat_list.append(quat_list)
@@ -345,10 +345,20 @@ def final_mighti_quat(quat_list, x_hat, y_hat, z_hat, time):
 	final_quaternion_list = []
 	for i in range(len(x_hat)):
 		time_string = convert_time_format(time[i])
-		matrix = np.matrix([x_hat[i].tolist(), y_hat[i].tolist(), z_hat[i].tolist()])
+		matrix = np.matrix([x_hat[i], y_hat[i], z_hat[i]])
 		theta, phi, psi = compute_euler_angles(matrix)
 		quaternion = euler_angles_to_quaternion(theta, phi, psi)
 		quat_matrix = np.matrix([quat_list[0][i], quat_list[1][i], quat_list[2][i], quat_list[3][i]])
 		quat_product = np.matmul(quat_matrix, quaternion).tolist()
 		final_quaternion_list += quat_product[0][1], quat_product[0][2], quat_product[0][3], quat_product[0][0], time_string
 	return final_quaternion_list
+
+def check_values(lst):
+	indexer = []
+	for i in range(len(lst)):
+		vec = lst[i]
+		for j in range(len(vec)):
+			if not(isinstance(vec[j], float)):
+				indexer.append(i)
+				break
+	return indexer
