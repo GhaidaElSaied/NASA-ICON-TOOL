@@ -30,11 +30,11 @@ def czml_generator_mighti(filename):
   orient_list = [bottom_left, bottom_right, top_left, top_right]
   for i in range(4):
       missing_index = calc_funcs.check_list(orient_list[i])
-      for k in range(missing_index):
+      for k in range(len(missing_index)):
           for j in range(4):
               orient_list[j].pop(missing_index[k])
-              time.pop(missing_index[k])
-              x_hat.pop(missing_index[k]), y_hat.pop(missing_index[k]), z_hat.pop(missing_index[k])
+          time.pop(missing_index[k])
+          x_hat.pop(missing_index[k]), y_hat.pop(missing_index[k]), z_hat.pop(missing_index[k])
 
 
   #position of spacecraft
