@@ -114,7 +114,7 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 			psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 			phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
 			quaternion = euler_angles_to_quaternion(theta_1, psi_1, phi_1)
-			unit_quaternions_list +=time_string,  -1* quaternion[1],  -1* quaternion[2],  -1 *quaternion[3], quaternion[0]
+			unit_quaternions_list +=time_string,  quaternion[0],  quaternion[1],  quaternion[2], quaternion[3]
 	return unit_quaternions_list
 
 
@@ -158,7 +158,7 @@ def compute_phi(matrix, theta_1, theta_2):
 	phi_2 = arctan2(phi_2_num, phi_2_denom)
 	return phi_1, phi_2
 
-def euler_angles_to_quaternion(theta, phi, psi):
+def euler_angles_to_quaternion(theta, psi, phi):
 	q_0 = cos2(phi) * cos2(theta) * cos2(psi) + sin2(phi) * sin2(theta) * sin2(psi)
 	q_1 = sin2(psi) * cos2(theta) * cos2(phi) - cos2(psi) * sin2(theta) * sin2(phi)
 	q_2 = cos2(psi) * sin2(theta) * cos2(phi) + sin2(psi) * cos2(theta) * sin2(phi)
