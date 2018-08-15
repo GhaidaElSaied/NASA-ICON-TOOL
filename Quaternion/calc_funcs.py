@@ -355,5 +355,4 @@ def check_values(lst):
 		for j in range(len(vec)):
 			if not(isinstance(vec[j], float)):
 				indexer.append(i)
-				break
 	return indexer
