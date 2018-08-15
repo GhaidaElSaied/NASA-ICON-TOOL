@@ -122,17 +122,17 @@ def compute_euler_angles(matrix):
 		if matrix[2,0] == -1:
 			theta = pi/2
 			psi = arctan2(matrix[0,1], matrix[0,2])
-			return theta, phi, psi
+			return theta, psi, phi
 		else:
 			theta = -1 * pi/2
 			psi = arctan2((-1* matrix[0,1]), (-1*matrix[0,2]))
-			return theta, phi, psi
+			return theta, psi, phi
 	else:
 		theta_1 = -1 * arcsin(matrix[2,0])
 		theta_2 = pi - theta_1
 		psi_1, psi_2 = compute_psi(matrix, theta_1, theta_2)
 		phi_1, phi_2 = compute_phi(matrix, theta_1, theta_2)
-		return theta_1, phi_1, psi_1
+		return theta_1, psi_1, phi_1
 
 
 def compute_psi(matrix, theta_1, theta_2):
@@ -275,14 +275,12 @@ def sciquat_to_eng_quat(quaternion):
 	eng_quat.append(scalar)
 	return eng_quat
 
-
 def quaternion_rotation_time(quaternion, vector, time):
     """Gives the orientation of a particular vector rotated by a quaternion given at some time"""
     new_vector = vector[:]
     for i in range(time):
         new_vector = quaternion_rotation(quaternion, new_vector)
     return new_vector
-
 
 def orientation_to_unit_quaternion(azimuth, zenith):
 	"""Converts horizontal coordinate data to unit quaternion by determining Euler angles"""
@@ -345,7 +343,7 @@ def final_mighti_quat(quat_list, x_hat, y_hat, z_hat, time):
 		quaternion = euler_angles_to_quaternion(theta, phi, psi)
 		quat_matrix = np.matrix([quat_list[0][i], quat_list[1][i], quat_list[2][i], quat_list[3][i]])
 		quat_product = np.matmul(quat_matrix, quaternion).tolist()
-		final_quaternion_list += quat_product[0][1], quat_product[0][2], quat_product[0][3], quat_product[0][0], time_string
+		final_quaternion_list += time_string, quat_product[0][1], quat_product[0][2], quat_product[0][3], quat_product[0][0]
 	return final_quaternion_list
 
 def check_values(lst):
@@ -355,4 +353,5 @@ def check_values(lst):
 		for j in range(len(vec)):
 			if not(isinstance(vec[j], float)):
 				indexer.append(i)
+				break
 	return indexer
