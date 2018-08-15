@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>ICON Visualization</title>
+  <script src="Cesium/Build/Cesium/Cesium.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+  <link href = "https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/lux/bootstrap.min.css" rel = "stylesheet" type = "text/css" />
+  <style>
+      @import url(Cesium/Build/Cesium/Widgets/widgets.css);
+      html, body, #cesiumContainer {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      #dropButton, #orbitButton {
+        background-color: #2f69c6;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        position: relative;
+        border-radius: 10px;
+      }
+
+      .toolbar, .orbitBtn {
+        position: absolute !important;
+        display: inline-block;
+        top: 20px;
+        left: 300px;
+      }
+
+	.dateSelector {
+		position: absolute !important;
+		display: inline-block;
+		top: 300px;
+		left: 300px;
+	}
+
+      .orbitBtn {
+        left: 450px;
+      }
+
+      .instrumentFOVs {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+
+      .instrumentFOVs a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+      }
+
+      .instrumentFOVs a:hover {
+        background-color: #ddd;
+      }
+
+      .toolbar:hover .instrumentFOVs {
+        display: block;
+      }
+
+      .toolbar:hover #dropButton, .orbitBtn:hover #orbitButton {
+        background-color: #4286f4;
+      }
+
+	#ui-datepicker-div {
+		visibility: hidden;
+	}
+
+	.ui-datepicker {
+		background: #fff; /* Old browsers */
+		background: #fff -moz-linear-gradient(top, #fcfcfc 0%, #fff 100%); /* FF3.6+ */
+		background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fcfcfc)), color-stop(100%,#fff)); /* Chrome,Safari4+ */
+		background: #fff -webkit-linear-gradient(top, #fcfcfc 0%, #fff 100%); /* Chrome10+,Safari5.1+ */
+		background: #fff -o-linear-gradient(top, #fcfcfc 0%, #fff 100%); /* Opera11.10+ */
+		background: #fff -ms-linear-gradient(top, #fcfcfc 0%, #fff 100%); /* IE10+ */
+		background: #fff linear-gradient(top, #fcfcfc 0%, #fff 100%); /* W3C */
+		font-size:11px;
+		padding:10px;
+		border:1px solid #ccc;
+		border-radius: 10px;
+	}
+ 
+	.ui-datepicker table td {
+		text-align:center;
+	}
+ 
+	.ui-datepicker a {
+		cursor:pointer;
+		text-decoration:none;
+	}
+ 
+	.ui-datepicker-prev {
+	}
+ 
+	.ui-datepicker-next {
+		float:right;
+	}
+ 
+	.ui-datepicker-title {
+		text-align: center;
+		font-weight:bold;
+	}
+
+	.ui-datepicker-current-day .ui-state-active { 
+		background: #b0e0e6; 
+	}
+
+  </style>
+</head>
+<body>
+  <div class = "container">
+    <div id = "cesiumContainer">
+      <script src = "Reader%20Files/fileMap.js"></script>
+      <script defer>
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkZDQwODk2ZS02MGI0LTQyYzItYTVlNi1mNGVkZGVkZDQxZDAiLCJpZCI6MTU1MiwiaWF0IjoxNTI4OTExNTQyfQ.HWE9MST2orEGW-gW5uuIHz2-EyuM1zIyfBiYg6h-gtg';
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+          shouldAnimate: true
+        });
+
+	var selectedDate;
+	var splitDate;
+	var dayNum;
+	var loaded;
+	var ivmaSrc;
+	var ivmbSrc;
+	var euvSrc;
+	var mightiaSrc;
+	var mightibSrc;
+	var ivmaEntity;
+	var ivmbEntity;
+	var euvEntity;
+
+	function UrlExists(urlParam) {
+		var response = $.ajax({
+    			type: 'HEAD',
+    			url: urlParam,
+			async: false,
+		}).status;
+		if (response == 200) {
+			return true;
+		}
+		return false;
+	}
+
+	function prevDateNum(year, month, day) {
+		if (day == "01") {
+			if (month == "01") {
+				return dayOfYear(parseInt(year) - 1, 12, 31);
+			} else if (month == "03") {
+				if (year % 400 == 0 || year % 4 == 0) {
+					return dayOfYear(29, 2, year);
+				} else {
+					return dayOfYear(28, 2, year);
+				}
+			} else {
+				var prevMonth = parseInt(month) - 1;
+				return dayOfYear(parseInt(year), prevMonth, monthDays[prevMonth]);
+			}
+		} else {
+			return dayOfYear(parseInt(year), parseInt(month), parseInt(day) - 1);
+		}
+	}
+
+	function nextDateNum(year, month, day) {
+		if (day == monthDays[month]) {
+			if (month == "12") {
+				return dayOfYear(parseInt(year) + 1, 1, 1);
+			} else if (month == "02") {
+				if (year % 400 == 0 || year % 4 == 0) {
+					return dayOfYear(year, 2, 29);
+				} else {
+					return dayOfYear(year, 3, 1);
+				}
+			} else {
+				var nextMonth = parseInt(month) + 1;
+				return dayOfYear(parseInt(year), nextMonth, 1);
+		}
+		} else {
+			return dayOfYear(parseInt(year), parseInt(month), parseInt(day) + 1);
+		}
+	}
+
+
+
+	var numDays = 3;
+
+	viewer.scene.mode = Cesium.SceneMode.SCENE3D;
+
+	var monthDays = {
+				1 : 31,
+				2 : 28,
+				3 : 31,
+				4 : 30,
+				5 : 31,
+				6 : 30,
+				7 : 31,
+				8 : 31,
+				9 : 30,
+				10 : 31,
+				11 : 30,
+				12 : 31
+			}
+
+	function dayOfYear(year, month, day) {
+		if (year % 400 == 0 || year % 4 == 0) {
+			monthDays[2] = 29;
+		}
+		var dayOfYr = 0;
+		for (var i = 1; i < month; i++) {
+			dayOfYr += monthDays[i];
+		}
+		dayOfYr += day;
+		strDay = dayOfYr.toString();
+		if (dayOfYr < 10) {
+			strDay = "00" + strDay;
+		} else if (dayOfYr < 100) {
+			strDay = "0" + strDay;
+		}
+		return strDay;
+	}
+
+	var terrainProvider = Cesium.createWorldTerrain({
+    		requestWaterMask: true
+	});
+        viewer.terrainProvider = terrainProvider;
+        viewer.scene.globe.enableLighting = true;
+
+        $(window).ready(function() {
+		viewer.automaticallyTrackDataSourceClocks = false;
+		var startDate = String(viewer.clock.currentTime).substring(0, 10);
+		var startSplit = startDate.split("-");
+		loadData(startSplit[0], startSplit[1], startSplit[2]);
+
+		function loadData(year, month, day) {
+			loaded = false;
+			viewer.dataSources.removeAll();
+			current = year + "-" + month + "-" + day + "T00:00:00.00Z";
+			dayNum = dayOfYear(parseInt(year), parseInt(month), parseInt(day));
+			var prevYear = year;
+			var prevDayNum = prevDateNum(year, month, day);
+			var nextYear = year;
+			var nextDayNum = nextDateNum(year, month, day);
+			if (prevDayNum == "365" || prevDayNum == "366") {
+				prevYear = (parseInt(year) - 1).toString();
+			}
+
+			if (nextDayNum == "001") {
+				nextYear = (parseInt(year) + 1).toString();
+			}
+
+			var loadedPrev = false;
+			var loadedCurr = false;
+
+			var matched = fileMap[year + "-" + dayNum];
+			var prevMatched = fileMap[prevYear + "-" + prevDayNum];
+
+			targetUrls = [
+				"new-czml/" + matched,
+				"new-czml/" + prevMatched
+			];
+
+			/*if (year == "2017" & month == "05" & (day == "27" || day == "28" || day == "29")) {
+				instraUrls = ["ICON_L0P_IVM-A_Ancillary_2017-05-" + day + "_v14r000.txt", "ICON_L0P_IVM-B_Ancillary_2017-05-" + day + "_v14r000.txt"]
+			} else {*/
+				instraUrls = ["IVM-A/" + year + "-" + dayNum + ".txt",
+					"IVM-B/" + year + "-" + dayNum + ".txt",
+					"EUV/" + year + "-" + dayNum + ".txt",
+					"FUV/" + year + "-" + dayNum + ".txt",
+					"MIGHTI-A/" + year + "-" + dayNum + ".txt",
+					"MIGHTI-B/" + year + "-" + dayNum + ".txt"
+				];
+			//}
+		
+			for (var i = 0; i < 3; i++) {
+				if (!loadedCurr & UrlExists(targetUrls[i])) {
+					var testSrc = new Cesium.CzmlDataSource();
+					var testData = testSrc.load(targetUrls[i]);
+					viewer.dataSources.add(testData);
+					loadedCurr = true;
+				}
+			}
+
+			for (var i = 3; i < targetUrls.length; i++) {
+				if (!loadedPrev & UrlExists(targetUrls[i])) {
+					var prevSrc = new Cesium.CzmlDataSource();
+					var prevData = prevSrc.load(targetUrls[i]);
+					viewer.dataSources.add(prevData);
+					loadedPrev = true;
+				}
+			}
+
+			for (var i = 0; i < instraUrls.length; i++) {
+				if (i == 0) {
+					ivmaSrc = new Cesium.CzmlDataSource().load(instraUrls[i]);
+					ivmaSrc.then(function (dataSource) {
+    						viewer.dataSources.add(ivmaSrc);
+						ivmaEntity = dataSource.entities.getById("IVM-A");
+					});
+				}
+				else if (i == 1) {
+					ivmbSrc = new Cesium.CzmlDataSource().load(instraUrls[i]);
+					ivmbSrc.then(function (dataSource) {
+    						viewer.dataSources.add(ivmbSrc);
+						ivmbEntity = dataSource.entities.getById("IVM-B");
+					});
+				}
+
+				else if (i == 2) {
+					euvSrc = new Cesium.CzmlDataSource().load(instraUrls[i]);
+					euvSrc.then(function (dataSource) {
+    						viewer.dataSources.add(euvSrc);
+						euvEntity = dataSource.entities.getById("EUV");
+					});
+				}
+
+				else if (i == 4) {
+					mightiaSrc = new Cesium.CzmlDataSource().load(instraUrls[i]);
+					mightiaSrc.then(function (dataSource) {
+    						viewer.dataSources.add(mightiaSrc);
+						mightiaEntity = dataSource.entities.getById("MIGHTI-A");
+					});
+				}
+
+				else if (i == 5) {
+					mightibSrc = new Cesium.CzmlDataSource().load(instraUrls[i]);
+					mightibSrc.then(function (dataSource) {
+    						viewer.dataSources.add(mightibSrc);
+						mightibEntity = dataSource.entities.getById("MIGHTI-B");
+					});
+				}
+			}
+
+			viewer.clock.currentTime = new Cesium.JulianDate.fromIso8601(current);
+			currentNext = Cesium.JulianDate.addDays(viewer.clock.currentTime, 1, new Cesium.JulianDate());
+			viewer.timeline.updateFromClock();
+			viewer.timeline.zoomTo(viewer.clock.currentTime, currentNext);
+		}
+
+		var lastLoaded = String(viewer.clock.currentTime).substring(0,10);
+		var current;
+		var currSplit;
+		var newYr;
+		var newMonth;
+		var newDay;
+		var i;
+
+		var myListener = function(clock){
+  			current = String(viewer.clock.currentTime).substring(0, 10);
+  			currSplit = current.split("-");
+  			newYr = currSplit[0];
+  			newMonth = currSplit[1];
+  			newDay = currSplit[2];
+  			if (lastLoaded != current){
+      				lastLoaded = current;
+      				loadData(newYr, newMonth, newDay);
+      				viewer.timeline.updateFromClock();
+  			}  
+		};
+
+		viewer.clock.onTick.addEventListener(myListener, function(clock) {
+  			var lastLoaded = String(viewer.clock.currentTime).substr(0,10);
+		});
+
+		$(".date").click(function() {
+			var clickedDate = this.value.split("/");
+			var splitDay = clickedDate[1];
+			var splitMonth = clickedDate[0];
+			var splitYear = clickedDate[2];
+			var current = "20" + splitYear + "-" + splitMonth + "-" + splitDay + "T00:00:00.00Z";
+			viewer.clock.currentTime = new Cesium.JulianDate.fromIso8601(current);
+			viewer.timeline.updateFromClock();
+			viewer.timeline.zoomTo(viewer.clock.currentTime, viewer.clock.stopTime);
+		});
+
+		$("#ivmaFOV").click(function() {
+			ivmaEntity.show = !ivmaEntity.show;
+          	});
+
+          	$("#ivmbFOV").click(function() {
+			ivmbEntity.show = !ivmbEntity.show;
+          	});
+	
+          	$("#orbitButton").click(function() {
+			var path;
+			var test;
+			for (i = 0; i < numDays; i++) {
+				path = pathSrc[i].entities.getById("orbitPath");
+				path.show = !path.show;
+			}
+			test = testSrc.entities.getById("ICON");
+			test.show = !test.show;
+          	});
+
+		$(".dateSelector").datepicker({
+			onSelect: function() {
+				viewer.dataSources.removeAll();
+				selectedDate = $(this).datepicker("getDate");
+				year = selectedDate.getFullYear().toString();
+				month = (selectedDate.getMonth() + 1).toString();
+				if (month < 10) {
+					month = "0" + month;
+				}
+				day = selectedDate.getDate().toString();
+				if (day < 10) {
+					day = "0" + day;
+				}
+				loadData(year, month, day);
+			}
+		});
+
+		$(".cesium-animation-blank").click(function() {
+			var currVis = $(".dateSelector").css("visibility");
+			if (currVis == "visible") {
+				$(".dateSelector").css("visibility", "hidden");
+			} else {
+				$(".dateSelector").css("visibility", "visible");
+			}
+		});
+
+		
+	});
+	
+	</script>
+	<div class = "toolbar">
+        	<button id = "dropButton" class = "dropButton">Toggle FOVs</button>
+        	<div class = "instrumentFOVs">
+          		<a href = "#" class = "instr" id = "ivmaFOV">IVM-A</a>
+          		<a href = "#" class = "instr" id = "ivmbFOV">IVM-B</a>
+          		<!--<a href = "#" class = "instr" id = "euvFOV">EUV</a>-->
+          		<!--<a href = "#" class = "instr" id = "fuvFOV">FUV</a>-->
+          		<!--<a href = "#" class = "instr" id = "mightiaFOV">MIGHTI-A</a>-->
+          		<!--<a href = "#" class = "instr" id = "mightibFOV">MIGHTI-B</a>-->
+        	</div>
+      	</div>
+      	<div class = "orbitBtn">
+        	<button id = "orbitButton">Toggle Path</button>
+      	</div>
+    	</div>
+	<div class = "dateSelector" style = "visibility: hidden;">
+	</div>
+  </div>
+</body>
+</html>
