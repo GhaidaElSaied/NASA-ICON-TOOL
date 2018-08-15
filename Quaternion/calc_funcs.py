@@ -117,7 +117,7 @@ def FOV_ivm_orientations(x_hat, y_hat, z_hat, time):
 
 
 def compute_euler_angles(matrix):
-	if .99 <= abs(matrix[2,0]) <= 1:
+	if abs(matrix[2,0]) == 1:
 		phi = 0 #in this case, phi value can be arbitrary
 		if matrix[2,0] == -1:
 			theta = pi/2
@@ -345,6 +345,16 @@ def final_mighti_quat(quat_list, x_hat, y_hat, z_hat, time):
 		quat_product = np.matmul(quat_matrix, quaternion).tolist()
 		final_quaternion_list += time_string, -1 * quat_product[0][1], -1 * quat_product[0][2], -1 * quat_product[0][3], quat_product[0][0]
 	return final_quaternion_list
+
+def mighti_fov(vector, time):
+	quaternion_list = []
+	for i in range(len(vector)):
+		time_string = convert_time_format(time[i])
+		matrix = np.matrix(np.diag(vector[i]))
+		theta, psi, phi = compute_euler_angles(matrix)
+		quaternion = euler_angles_to_quaternion(theta, psi, phi)
+		quaternion_list += time_string, quaternion[0], quaternion[1], quaternion[2], quaternion[3]
+	return quaternion_list
 
 def check_values(lst):
 	indexer = []
