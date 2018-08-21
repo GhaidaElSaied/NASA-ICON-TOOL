@@ -282,18 +282,52 @@ def quaternion_rotation_time(quaternion, vector, time):
         new_vector = quaternion_rotation(quaternion, new_vector)
     return new_vector
 
-def orientation_to_unit_quaternion(azimuth, zenith):
-	"""Converts horizontal coordinate data to unit quaternion by determining Euler angles"""
-	euler_angles = horizontal_orientation_to_euler_angle(azimuth, zenith)
-	quat = euler_rotation_to_quaternion(euler_angles)
-	return -1 * quat[1], -1 * quat[2], -1 * quat[3], quat[0]
+def euv_orientation_to_unit_quaternion(azimuth,zenith):
+	euler_angles = euv_horizontal_orientation_to_euler_angle(azimuth, zenith)
+	quat = euler_rotation_to_quaternion(euler_angles[i])
+	quaternion_list += time_string, -1 * quat[1], -1 * quat[2], -1 * quat[3], quat[0]
 
-def horizontal_orientation_to_euler_angle(azimuth, zenith):
-    """Takes horizontal coordinate data and returns and euler angle matrix"""
-    phi = math.radians(azimuth)
-    theta = math.radians(zenith)
-    euler_angles = np.array([[-1*math.sin(phi), math.cos(phi), 0], [-math.cos(theta) * math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta)], [math.sin(theta) * math.cos(phi), math.sin(theta) * math.sin(phi), math.cos(theta)]])
-    return euler_angles
+
+def fuv_orientation_to_unit_quaternion(azimuth, zenith):
+	quaternion_list = []
+	euler_angles = fuv_horizontal_orientation_to_euler_angle(azimuth, zenith)
+	for i in range(len((euler_angles))):
+		quat = euler_rotation_to_quaternion(euler_angles[i])
+		quaternion_list.append(quat)
+	return quaternion_list
+
+def fuv_horizontal_orientation_to_euler_angle(azimuth, zenith):
+	euler_angle_list = []
+	for i in range(len(azimuth)):
+		phi = math.radians(azimuth[i])
+		theta = math.radians(zenith[i])
+		euler_angles = np.array([[-1*math.sin(phi), math.cos(phi), 0], [-math.cos(theta) * math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta)], [math.sin(theta) * math.cos(phi), math.sin(theta) * math.sin(phi), math.cos(theta)]])
+		euler_angle_list.append(euler_angles)
+	return euler_angle_list
+
+def euv_horizontal_orientation_to_euler_angle(azimuth, zenith):
+	phi = math.radians(azimuth)
+	theta = math.radians(zenith)
+	euler_angles = np.array([[-1*math.sin(phi), math.cos(phi), 0], [-math.cos(theta) * math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta)], [math.sin(theta) * math.cos(phi), math.sin(theta) * math.sin(phi), math.cos(theta)]])
+	return euler_angles
+
+def final_fuv_orientations(b_l_quat, b_r_quat, t_r_quat, t_l_quat, time):
+	time = time[:].tolist()
+	quat_product_list_1 = []
+	quat_product_list_2 = []
+	quat_product_list_3 = []
+	orientation_final_list = []
+	for i in range(len(b_l_quat)):
+		quat_product_list_1.append(hamilton_product(b_l_quat[i], b_r_quat[i]))
+	for j in range(len(t_r_quat)):
+		quat_product_list_2.append(hamilton_product(quat_product_list_1[j], t_r_quat[j]))
+	for k in range(len(t_l_quat)):
+		quat_product_list_3.append(hamilton_product(quat_product_list_2[k], t_l_quat[k]))
+	for l in range(len(quat_product_list_3)):
+		time_string = convert_time_format(time[l])
+		orientation_final_list += time_string, -1* quat_product_list_3[l][1], quat_product_list_3[l][2], quat_product_list_3[l][3], quat_product_list_3[l][0]
+	return orientation_final_list
+
 
 def ecef_position_list(positions):
 	"""gives ecef position as list"""
