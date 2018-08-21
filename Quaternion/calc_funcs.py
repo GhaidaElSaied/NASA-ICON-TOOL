@@ -282,10 +282,16 @@ def quaternion_rotation_time(quaternion, vector, time):
         new_vector = quaternion_rotation(quaternion, new_vector)
     return new_vector
 
-def euv_orientation_to_unit_quaternion(azimuth,zenith):
-	euler_angles = euv_horizontal_orientation_to_euler_angle(azimuth, zenith)
-	quat = euler_rotation_to_quaternion(euler_angles[i])
-	quaternion_list += time_string, -1 * quat[1], -1 * quat[2], -1 * quat[3], quat[0]
+def euv_orientation_to_unit_quaternion(azimuth,zenith, time):
+	quaternion_list = []
+	for i in range(len(time)):
+		time_string = convert_time_format(time[i])
+		avg_azimuth = np.mean(azimuth[i].tolist())
+		avg_zenith = np.mean(zenith[i].tolist())
+		euler_angles = euv_horizontal_orientation_to_euler_angle(avg_azimuth, avg_azimuth)
+		quat = euler_rotation_to_quaternion(euler_angles)
+		quaternion_list += time_string, -1 * quat[1], -1 * quat[2], -1 * quat[3], quat[0]
+	return quaternion_list
 
 
 def fuv_orientation_to_unit_quaternion(azimuth, zenith):
