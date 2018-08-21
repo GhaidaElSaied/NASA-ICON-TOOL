@@ -46,7 +46,7 @@ def czml_generator_fuv(filename):
            "interpolationDegree":1,
            "unitQuaternion":"""
  end_file = '}}]'
-file_complete = start_file + str(position_list).replace("'",'') + middle_file + str(orientation_list).replace("'",'') + end_file
+file_complete = start_file + str(position_list).replace("'",'') + middle_file + str(orientations_list).replace("'",'') + end_file
 f = open(filename[: -3] + '.txt', "w+")
 f.write(file_complete)
 f.close();
