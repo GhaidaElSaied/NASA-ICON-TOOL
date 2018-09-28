@@ -1,51 +1,25 @@
 from netCDF4 import Dataset
-import calc_funcs, numpy as np
+import calc_funcs
 
 def czml_generator_mighti(filename):
   mightidata = Dataset(filename, "r")
   type = filename.split("_")[2].split("-")[1]
-
-
   #read position of spacecraft in longitude, latitude, altitude
   lat = mightidata.variables["ICON_ANCILLARY_MIGHTI_LATITUDE"][:, 1]
   lon = mightidata.variables["ICON_ANCILLARY_MIGHTI_LONGITUDE"][:, 1]
   alt = mightidata.variables["ICON_ANCILLARY_MIGHTI_ALTITUDE"][:, 1]
   time = mightidata.variables["ICON_ANCILLARY_MIGHTI_TIME_UTC_STRING"][:, 1]
-
-  #read position of spacecraft in ECEF
-  sc_ecef_position = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_POSITION_ECEF"][:, :, 1]
-
-  #read orientation of spacecraft in ECEF
-  #x_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_XHAT"][:, 1].tolist()
-  #y_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_YHAT"][:, 1].tolist()
-  #z_hat = mightidata.variables["ICON_ANCILLARY_MIGHTI_SC_ZHAT"][:, 1].tolist()
-  #read orientation of MIGHTI instrument in ECEF
-  mighti_FOV = mightidata.variables["ICON_ANCILLARY_MIGHTI_FOV_UNITVECTORS_ECEF"]
-  middle_middle = mighti_FOV[:,1,1,:,1].tolist()
-  #check to make sure there are no missing data points
-  time_orientation = time
-  missing_index = calc_funcs.check_values(middle_middle)
-  for k in range(len(missing_index)):
-    middle_middle.pop(missing_index[k])
-    time_orientation.pop(missing_index[k])
-  orientation_list = calc_funcs.mighti_fov(middle_middle, time_orientation)
-
-  #position of spacecraft
   position_list = calc_funcs.positions(lat, lon, alt, time)
-   #ECEF postion of spacecraft
-  #ecef_pos = calc_funcs.ecef_position_list(sc_ecef_position)
-  #put FOV vectors in quaternion
-  ##bottom_right_quat = calc_funcs.mighti_orientations(orient_list[0], orient_list[1], orient_list[2], orient_list[3])[1]
-  #top_left_quat = calc_funcs.mighti_orientations(orient_list[0], orient_list[1], orient_list[2], orient_list[3])[2]
-  #top_right_quat = calc_funcs.mighti_orientations(orient_list[0], orient_list[1], orient_list[2], orient_list[3])[3]
-  #rotate the ECEF positions by the various FOV quaternions and put in unit quaternion form
-  #bottom_left_quat_final = calc_funcs.unit_quaternion_mighti_fov(bottom_left_quat, ecef_pos)
-  #bottom_right_quat_final = calc_funcs.unit_quaternion_mighti_fov(bottom_right_quat, ecef_pos)
-  #top_left_quat_final = calc_funcs.unit_quaternion_mighti_fov(top_left_quat, ecef_pos)
-  #top_right_quat_final = calc_funcs.unit_quaternion_mighti_fov(top_right_quat, ecef_pos)
-  #compute the final orientation FOV
-  #quaternion_list = [bottom_left_quat_final, bottom_right_quat_final, top_left_quat_final, top_right_quat_final]
-  #orientation_FOV = calc_funcs.final_mighti_quat(quaternion_list, x_hat, y_hat, z_hat, time)
+  #read orientation of spacecraft in ECEF
+  mighti_fov = mightidata.variables["ICON_ANCILLARY_MIGHTI_FOV_UNITVECTORS_ECEF"]
+  #extract vectors for four corners
+  bottom_left_vectors = mighti_fov[:,0, 0, :, 1].tolist()
+  bottom_right_vectors = mighti_fov[:,2, 0, :, 1].tolist()
+  top_right_vectors = mighti_fov[:,2, 2, :, 1].tolist()
+  top_left_vectors = mighti_fov[:, 0, 2, :, 1].tolist()
+  b_l_vectors, b_r_vectors, t_r_vectors, t_l_vectors, time_orient = calc_funcs.mighti_check_values(bottom_left_vectors, bottom_right_vectors, top_right_vectors, top_left_vectors, time.tolist())
+
+  orientation_list = calc_funcs.mighti_orientation_calc(b_l_vectors, b_r_vectors, t_r_vectors, t_l_vectors, time_orient)
 
 
   start_file = """[{"version": "1.0", "id": "document"},
@@ -79,5 +53,3 @@ def czml_generator_mighti(filename):
 
 
   return "file written for" + filename
-
-czml_generator_mighti("ICON_L0P_MIGHTI-A_Ancillary_2017-05-27_v01r001.NC")
