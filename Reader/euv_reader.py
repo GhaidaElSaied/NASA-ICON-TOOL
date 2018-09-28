@@ -13,7 +13,7 @@ def czml_generator_euv(filename):
 	alt = euvdata.variables["ICON_ANCILLARY_EUV_ALTITUDE"]
 
 	azimuth = euvdata.variables["ICON_ANCILLARY_EUV_FOV_AZIMUTH_ANGLE"][:, ].tolist()
-	zenith = euvdata.variables["ICON_ANCILLARY_EUV_FOV_ZENITH_ANGLE"].[:, ]tolist()
+	zenith = euvdata.variables["ICON_ANCILLARY_EUV_FOV_ZENITH_ANGLE"][:, ].tolist()
 
 	position_list = calc_funcs.positions(lat, lon, alt, time)
 	azimuth, zenith, time_orient = calc_funcs.euv_check_values(azimuth, zenith, time[:].tolist())
@@ -54,7 +54,4 @@ def czml_generator_euv(filename):
 	f.write(file_complete)
 	f.close();
 	return "file written for " + filename[:-3]
-euvdata = Dataset("ICON_L0P_EUV_Ancillary_2017-05-27_v01r001.NC", "r")
-azimuth = euvdata.variables["ICON_ANCILLARY_EUV_FOV_AZIMUTH_ANGLE"]
-zenith = euvdata.variables["ICON_ANCILLARY_EUV_FOV_ZENITH_ANGLE"]
-time = euvdata.variables["ICON_ANCILLARY_EUV_TIME_UTC_STRING"]
+
