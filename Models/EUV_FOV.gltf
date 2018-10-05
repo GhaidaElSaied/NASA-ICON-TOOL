@@ -1,0 +1,131 @@
+{
+    "asset": {
+        "generator": "COLLADA2GLTF",
+        "version": "2.0"
+    },
+    "scenes": [
+        {
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "scene": 0,
+    "nodes": [
+        {
+            "children": [
+                1
+            ],
+            "name": "Y_UP"
+        },
+        {
+            "mesh": 0,
+            "name": "pPyramid1"
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": 1,
+                        "POSITION": 2
+                    },
+                    "indices": 0,
+                    "mode": 4,
+                    "material": 0
+                }
+            ],
+            "name": "pPyramid1Mesh"
+        }
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5123,
+            "count": 18,
+            "max": [
+                15
+            ],
+            "min": [
+                0
+            ],
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 16,
+            "max": [
+                0.7029950022697449,
+                0.48952001333236697,
+                0.7002679705619812
+            ],
+            "min": [
+                -0.7002679705619812,
+                -1.0,
+                -0.7029950022697449
+            ],
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 192,
+            "componentType": 5126,
+            "count": 16,
+            "max": [
+                0.008105210028588772,
+                0.042091451585292819,
+                0.008105210028588772
+            ],
+            "min": [
+                -0.013746069744229317,
+                -0.004052610136568546,
+                -0.014783089980483057
+            ],
+            "type": "VEC3"
+        }
+    ],
+    "materials": [
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.4000000059604645,
+                    0.4000000059604645,
+                    0.4000000059604645,
+                    1.0
+                ],
+                "metallicFactor": 0.0
+            },
+            "emissiveFactor": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "name": "lambert1"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 384,
+            "byteLength": 36,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 384,
+            "byteStride": 12,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 420,
+            "uri": "data:application/octet-stream;base64,AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAh8Esv4HtmL6HwSy/h8Esv4HtmL6HwSy/h8Esv4HtmL6HwSy/w0Qzv9wRDj7DRDM/w0Qzv9wRDj7DRDM/w0Qzv9wRDj7DRDM/+dgdP16i+j7o2B0/+dgdP16i+j752B0/6NgdP16i+j7o2B0/e/czP2GI3D179zO/e/czP2GI3D179zO/e/czP2GI3D179zO/t8sEPMLLhLsAAAAAt8sEvMLLhLsAAACAAAAAAMLLhLu3ywS8AAAAgMLLhLu3ywQ8AAAAAMLLhLu3ywS8t8sEvMLLhLsAAACAMjdhvBZoLD3GNHK8t8sEvMLLhLsAAACAAAAAgMLLhLu3ywQ8MjdhvBZoLD3GNHK8AAAAgMLLhLu3ywQ8t8sEPMLLhLsAAAAAMjdhvBZoLD3GNHK8t8sEPMLLhLsAAAAAAAAAAMLLhLu3ywS8MjdhvBZoLD3GNHK8AAABAAIAAQAAAAMABAAFAAYABwAIAAkACgALAAwADQAOAA8A"
+        }
+    ]
+}
