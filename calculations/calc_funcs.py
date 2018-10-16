@@ -155,7 +155,7 @@ def unit_quaternion(quat):
 def quaternion_norm(quat):
     norm = 0
     for i in range(4):
-        norm +=  np .square(quat[i])
+        norm +=  np.square(quat[i])
     norm = sqrt(norm)
     return norm
 
@@ -251,19 +251,29 @@ def mighti_orientation_calc(bottom_left_vectors, bottom_right_vectors, top_right
 	b_r_quat = vector_to_pure_quaternion(bottom_right_vectors)
 	t_r_quat = vector_to_pure_quaternion(top_right_vectors)
 	t_l_quat = vector_to_pure_quaternion(top_left_vectors)
-	quat_product_1 = []
-	quat_product_2 = []
-	quat_product_3 = []
+	rotation_1 = []
+	rotation_2 = []
+	rotation_3 = []
+	rotation_4 = []
 	orientation_final_list = []
+	orientation_time = []
 	for i in range(len(b_l_quat)):
-		quat_product_1.append(hamilton_product(b_r_quat[i], b_l_quat[i]))
-	for i in range(len(quat_product_1)):
-		quat_product_2.append(hamilton_product(t_r_quat[i], quat_product_1[i]))
-	for i in range(len(quat_product_2)):
-		quat_product_3.append(hamilton_product(t_l_quat[i], quat_product_2[i]))
-	for i in range(len(quat_product_3)):
-		orientation_final_list += [convert_time_format(time[i])] + sciquat_to_eng_quat(quat_product_3[i])
-	return orientation_final_list
+		rotation_1.append(hamilton_product(b_r_quat[i], b_l_quat[i]))
+	for i in range(len(b_r_quat)):
+		rotation_2.append(hamilton_product(t_r_quat[i], b_r_quat[i]))
+	for i in range(len(t_r_quat)):
+		rotation_3.append(hamilton_product(t_l_quat[i], t_r_quat[i]))
+	for i in range(len(t_l_quat)):
+		rotation_4.append(hamilton_product(b_l_quat[i], t_l_quat[i]))
+	for i in range(len(rotation_4)):
+			quat_1 = hamilton_product(rotation_2[i], rotation_1[i])
+			quat_2 = hamilton_product(rotation_3[i], quat_1)
+			quat_3 = hamilton_product(rotation_4[i], quat_2)
+			orientation_final_list.append(hamilton_product(rotation_1[i], quat_3))
+	for i in range(len(orientation_final_list)):
+		orientation_time += [convert_time_format(time[i])]+ sciquat_to_eng_quat(orientation_final_list[i])
+	return orientation_time
+
 
 
 def check_values(lst):
