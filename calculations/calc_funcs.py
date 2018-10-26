@@ -179,14 +179,14 @@ def euv_orientations_calc(azimuth,zenith, time):
 		matrix = euv_horizontal_orientation_to_matrix(avg_azimuth, avg_azimuth)
 		theta, psi, phi = compute_euler_angles(matrix)
 		quat = euler_angles_to_quaternion(theta, psi, phi)
-		quaternion_list += time_string, quat[1], quat[2], quat[3], quat[0]
+		quaternion_list += time_string, quat[0], quat[1], quat[2], quat[3]
 	return quaternion_list
 
 def euv_horizontal_orientation_to_matrix(azimuth, zenith):
 	"Outputs the 3x3 rotation matrix from azimuth and zenith angles for EUV"
-	phi = math.radians(azimuth)
-	theta = math.radians(zenith)
-	matrix = np.matrix([[-1*math.sin(phi), -math.cos(theta) * math.cos(phi), math.sin(theta) * math.cos(phi)], [math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta) * math.sin(phi)], [0, math.sin(theta), math.cos(theta)]])
+	phi = math.radians(zenith)
+	theta = math.radians(azimuth)
+	matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, 0, cos(phi)]])
 	return matrix
 
 
@@ -197,7 +197,7 @@ def fuv_horizontal_orientation_to_euler_angle(azimuth, zenith):
 	for i in range(len(azimuth)):
 		phi = math.radians(azimuth[i])
 		theta = math.radians(zenith[i])
-		matrix = np.matrix([[-1*math.sin(phi), -math.cos(theta) * math.cos(phi), math.sin(theta) * math.cos(phi)], [math.cos(phi), -math.cos(theta) * math.sin(phi), math.sin(theta) * math.sin(phi)], [0, math.sin(theta), math.cos(theta)]])
+		matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, 0, cos(phi)]])
 		matrix_list.append(matrix)
 	return matrix_list
 
@@ -225,7 +225,7 @@ def fuv_orientations_calc(b_l_quat, b_r_quat, t_r_quat, t_l_quat, time):
 		quat_product_list_3.append(hamilton_product(t_l_quat[k], quat_product_list_2[k]))
 	for l in range(len(quat_product_list_3)):
 		time_string = convert_time_format(time[l])
-		orientation_final_list += time_string, -1* quat_product_list_3[l][1], quat_product_list_3[l][2], quat_product_list_3[l][3], quat_product_list_3[l][0]
+		orientation_final_list += quat_product_list_3[l]
 	return orientation_final_list
 
 
@@ -271,6 +271,7 @@ def mighti_orientation_calc(bottom_left_vectors, bottom_right_vectors, top_right
 			quat_3 = hamilton_product(rotation_4[i], quat_2)
 			orientation_final_list.append(hamilton_product(rotation_1[i], quat_3))
 	for i in range(len(orientation_final_list)):
+		orientation_final_list[i][0] = -1*orientation_final_list[i][0]
 		orientation_time += [convert_time_format(time[i])]+ sciquat_to_eng_quat(orientation_final_list[i])
 	return orientation_time
 
