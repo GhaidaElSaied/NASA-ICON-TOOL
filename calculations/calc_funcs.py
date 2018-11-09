@@ -208,7 +208,7 @@ def fuv_horizontal_to_quaternion(azimuth, zenith):
 	for i in range(len((rotation_matrices))):
 		theta, psi, phi = compute_euler_angles(rotation_matrices[i])
 		quat = euler_angles_to_quaternion(theta, psi, phi)
-		quaternion_list.append([quat[3], -1* quat[0], -1 * quat[1], -1 * quat[2]])
+		quaternion_list.append(quat)
 	return quaternion_list
 
 def fuv_orientations_calc(b_l_quat, b_r_quat, t_r_quat, t_l_quat, time):
