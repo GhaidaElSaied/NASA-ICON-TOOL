@@ -186,7 +186,7 @@ def euv_horizontal_orientation_to_matrix(azimuth, zenith):
 	"Outputs the 3x3 rotation matrix from azimuth and zenith angles for EUV"
 	phi = math.radians(zenith)
 	theta = math.radians(azimuth)
-	matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, 0, cos(phi)]])
+	matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [-2*sin(theta)cos(theta)sin(phi), sin(phi), cos(phi)]])
 	return matrix
 
 
@@ -197,7 +197,7 @@ def fuv_horizontal_orientation_to_euler_angle(azimuth, zenith):
 	for i in range(len(azimuth)):
 		phi = math.radians(azimuth[i])
 		theta = math.radians(zenith[i])
-		matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, 0, cos(phi)]])
+		matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [-2*sin(theta)cos(theta)sin(phi), sin(phi), cos(phi)]])
 		matrix_list.append(matrix)
 	return matrix_list
 
