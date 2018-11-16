@@ -186,7 +186,7 @@ def euv_horizontal_orientation_to_matrix(azimuth, zenith):
 	"Outputs the 3x3 rotation matrix from azimuth and zenith angles for EUV"
 	phi = math.radians(zenith)
 	theta = math.radians(azimuth)
-	matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [-2*sin(theta)cos(theta)sin(phi), sin(phi), cos(phi)]])
+	matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, sin(phi), cos(phi)]])
 	return matrix
 
 
@@ -197,7 +197,7 @@ def fuv_horizontal_orientation_to_euler_angle(azimuth, zenith):
 	for i in range(len(azimuth)):
 		phi = math.radians(azimuth[i])
 		theta = math.radians(zenith[i])
-		matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [-2*sin(theta)cos(theta)sin(phi), sin(phi), cos(phi)]])
+		matrix = np.matrix([[cos(theta), -sin(theta), 0], [sin(theta), cos(theta), 0], [0, sin(phi), cos(phi)]])
 		matrix_list.append(matrix)
 	return matrix_list
 
@@ -215,17 +215,15 @@ def fuv_orientations_calc(b_l_quat, b_r_quat, t_r_quat, t_l_quat, time):
 	"Outputs the orientation list for FUV"
 	quat_product_list_1 = []
 	quat_product_list_2 = []
-	quat_product_list_3 = []
+
 	orientation_final_list = []
 	for i in range(len(b_l_quat)):
 		quat_product_list_1.append(hamilton_product(b_r_quat[i], b_l_quat[i]))
 	for j in range(len(t_r_quat)):
 		quat_product_list_2.append(hamilton_product(t_r_quat[j], quat_product_list_1[j]))
-	for k in range(len(t_l_quat)):
-		quat_product_list_3.append(hamilton_product(t_l_quat[k], quat_product_list_2[k]))
-	for l in range(len(quat_product_list_3)):
-		time_string = convert_time_format(time[l])
-		orientation_final_list += quat_product_list_3[l]
+	for k in range(len(quat_product_list_2)):
+		time_string = convert_time_format(time[k])
+		orientation_final_list += time_string + quat_product_list_2[k]
 	return orientation_final_list
 
 
