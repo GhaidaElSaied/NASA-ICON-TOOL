@@ -226,7 +226,7 @@ def fuv_orientations_calc(b_l_quat, b_r_quat, t_r_quat, t_l_quat, time):
 		quat_product_list_3.append(hamilton_product(t_l_quat[k], quat_product_list_2[k]))
 	for l in range(len(quat_product_list_3)):
 		quat_product_final.append(hamilton_product(b_l_quat[l], quat_product_list_3[l]))
-	for m in range(len(quat_product_final))
+	for m in range(len(quat_product_final)):
 		time_string = convert_time_format(time[m])
 		orientation_final_list += time_string + quat_product_list_3[m]
 	return orientation_final_list
@@ -262,20 +262,15 @@ def mighti_orientation_calc(bottom_left_vectors, bottom_right_vectors, top_right
 	orientation_time = []
 	for i in range(len(b_l_quat)):
 		rotation_1.append(hamilton_product(b_r_quat[i], b_l_quat[i]))
-	for i in range(len(b_r_quat)):
-		rotation_2.append(hamilton_product(t_r_quat[i], b_r_quat[i]))
 	for i in range(len(t_r_quat)):
-		rotation_3.append(hamilton_product(t_l_quat[i], t_r_quat[i]))
+		rotation_2.append(hamilton_product(t_r_quat[i], rotation_1[i]))
 	for i in range(len(t_l_quat)):
-		rotation_4.append(hamilton_product(b_l_quat[i], t_l_quat[i]))
-	for i in range(len(rotation_4)):
-			quat_1 = hamilton_product(rotation_2[i], rotation_1[i])
-			quat_2 = hamilton_product(rotation_3[i], quat_1)
-			quat_3 = hamilton_product(rotation_4[i], quat_2)
-			orientation_final_list.append(hamilton_product(rotation_1[i], quat_3))
+		rotation_3.append(hamilton_product(t_l_quat[i], rotation_2[i]))
+	for i in range(len(rotation_3)):
+	 	rotation_4.append(hamilton_product(b_l_quat[i], rotation_3[i]))
+	 	orientation_final_list.append(rotation_4[i])
 	for i in range(len(orientation_final_list)):
-		orientation_final_list[i][0] = -1*orientation_final_list[i][0]
-		orientation_time += [convert_time_format(time[i])]+ sciquat_to_eng_quat(orientation_final_list[i])
+	 	orientation_time += [convert_time_format(time[i])] + sciquat_to_eng_quat(orientation_final_list[i])
 	return orientation_time
 
 
