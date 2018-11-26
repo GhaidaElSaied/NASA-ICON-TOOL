@@ -228,7 +228,7 @@ def fuv_orientations_calc(b_l_quat, b_r_quat, t_r_quat, t_l_quat, time):
 		quat_product_final.append(hamilton_product(b_l_quat[l], quat_product_list_3[l]))
 	for m in range(len(quat_product_final)):
 		time_string = convert_time_format(time[m])
-		orientation_final_list += time_string + quat_product_list_3[m]
+		orientation_final_list += time_string + sciquat_to_eng_quat(_product_list_3[m])
 	return orientation_final_list
 
 
@@ -270,7 +270,7 @@ def mighti_orientation_calc(bottom_left_vectors, bottom_right_vectors, top_right
 	 	rotation_4.append(hamilton_product(b_l_quat[i], rotation_3[i]))
 	 	orientation_final_list.append(rotation_4[i])
 	for i in range(len(orientation_final_list)):
-	 	orientation_time += [convert_time_format(time[i])] + sciquat_to_eng_quat(orientation_final_list[i])
+	 	orientation_time += convert_time_format(time[i]) + sciquat_to_eng_quat(orientation_final_list[i])
 	return orientation_time
 
 
